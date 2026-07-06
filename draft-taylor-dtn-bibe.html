@@ -14,7 +14,7 @@
 <meta content="BPv7" name="keyword">
 <meta content="Bundle Protocol" name="keyword">
 <meta content="Encapsulation" name="keyword">
-<meta content="draft-dtn-taylor-bibe-latest" name="ietf.draft">
+<meta content="draft-taylor-dtn-bibe-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.34.0
     Python 3.14.5
@@ -30,7 +30,7 @@
     requests 2.33.1
     wcwidth 0.8.2
 -->
-<link href="draft-dtn-taylor-bibe.xml" rel="alternate" type="application/rfc+xml">
+<link href="draft-taylor-dtn-bibe.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">@font-face {
   font-family: 'Lora';
@@ -1059,9 +1059,9 @@ svg {
 <div id="internal-metadata" class="document-information">
 <dl id="identifiers">
 <dt class="label-workgroup">Workgroup:</dt>
-<dd class="workgroup">Delay/Disruption Tolerant Networking</dd>
+<dd class="workgroup">Network Working Group</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-dtn-taylor-bibe-latest</dd>
+<dd class="internet-draft">draft-taylor-dtn-bibe-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
 <time datetime="2026-07-06" class="published">6 July 2026</time>
@@ -1091,12 +1091,15 @@ svg {
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-dtn-taylor-bibe/">https://datatracker.ietf.org/doc/draft-dtn-taylor-bibe/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+        The latest revision of this draft can be found at <span><a href="https://ricktaylor.github.io/bibe/draft-taylor-dtn-bibe.html">https://ricktaylor.github.io/bibe/draft-taylor-dtn-bibe.html</a></span>.
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-taylor-dtn-bibe/">https://datatracker.ietf.org/doc/draft-taylor-dtn-bibe/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
         Discussion of this document takes place on the
         Delay/Disruption Tolerant Networking Working Group mailing list (<span><a href="mailto:dtn@ietf.org">mailto:dtn@ietf.org</a></span>),
         which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/dtn/">https://mailarchive.ietf.org/arch/browse/dtn/</a></span>.
         Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/dtn/">https://www.ietf.org/mailman/listinfo/dtn/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/ricktaylor/bibe">https://github.com/ricktaylor/bibe</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1387,28 +1390,93 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <p id="section-3-3"><a href="#fig-model" class="auto internal xref">Figure 1</a> illustrates the asymmetry of the model: the encapsulation function operates on the forwarding path of the encapsulating node, while the decapsulation element is an element of the application agent of the decapsulating node; the encapsulated bundle experiences the entire tunnel as a single hop.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <span id="name-functional-model-encapsulat"></span><div id="fig-model">
 <figure id="figure-1">
-        <div class="alignLeft art-text artwork" id="section-3-4.1">
-<pre>
-      Encapsulating Node                    Decapsulating Node
-
- bundle B ...(to bundle B, the tunnel is one hop)... bundle B
-    |                                                    ^
-    |                                                    |
- (forwarding path)                          (application agent)
-    v                                                    |
- +--------------+                                +--------------+
- | encapsulation|                                | decapsulation|
- |   function   |                                |    element   |
- +--------------+                                +--------------+
-    |                                                    ^
-    | sources bundle E                     payload of E  |
-    | (payload carries B,                  delivered to  |
-    |  destined for the                    the decap     |
-    |  decap endpoint)                     endpoint      |
-    v                                                    |
-   BPA --CLA--&gt; node --CLA--&gt; ... --CLA--&gt; BPA ----------+
-            ordinary BPv7 forwarding of bundle E
-</pre>
+        <div id="section-3-4.1">
+          <div class="alignLeft art-svg artwork" id="section-3-4.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="352" width="520" viewBox="0 0 520 352" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 8,144 L 8,192" fill="none" stroke="black"></path>
+              <path d="M 32,80 L 32,96" fill="none" stroke="black"></path>
+              <path d="M 32,200 L 32,288" fill="none" stroke="black"></path>
+              <path d="M 128,144 L 128,192" fill="none" stroke="black"></path>
+              <path d="M 392,144 L 392,192" fill="none" stroke="black"></path>
+              <path d="M 456,80 L 456,96" fill="none" stroke="black"></path>
+              <path d="M 456,200 L 456,304" fill="none" stroke="black"></path>
+              <path d="M 512,144 L 512,192" fill="none" stroke="black"></path>
+              <path d="M 8,144 L 128,144" fill="none" stroke="black"></path>
+              <path d="M 392,144 L 512,144" fill="none" stroke="black"></path>
+              <path d="M 8,192 L 128,192" fill="none" stroke="black"></path>
+              <path d="M 392,192 L 512,192" fill="none" stroke="black"></path>
+              <path d="M 96,304 L 112,304" fill="none" stroke="black"></path>
+              <path d="M 208,304 L 224,304" fill="none" stroke="black"></path>
+              <path d="M 312,304 L 328,304" fill="none" stroke="black"></path>
+              <path d="M 376,304 L 456,304" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="464,200 452,194.4 452,205.6" fill="black" transform="rotate(270,456,200)"></polygon>
+              <polygon class="arrowhead" points="464,80 452,74.4 452,85.6" fill="black" transform="rotate(270,456,80)"></polygon>
+              <polygon class="arrowhead" points="336,304 324,298.4 324,309.6" fill="black" transform="rotate(0,328,304)"></polygon>
+              <polygon class="arrowhead" points="232,304 220,298.4 220,309.6" fill="black" transform="rotate(0,224,304)"></polygon>
+              <polygon class="arrowhead" points="120,304 108,298.4 108,309.6" fill="black" transform="rotate(0,112,304)"></polygon>
+              <polygon class="arrowhead" points="40,288 28,282.4 28,293.6" fill="black" transform="rotate(90,32,288)"></polygon>
+              <g class="text">
+                <text x="96" y="36">Encapsulating</text>
+                <text x="172" y="36">Node</text>
+                <text x="400" y="36">Decapsulating</text>
+                <text x="476" y="36">Node</text>
+                <text x="28" y="68">bundle</text>
+                <text x="64" y="68">B</text>
+                <text x="100" y="68">...(to</text>
+                <text x="156" y="68">bundle</text>
+                <text x="196" y="68">B,</text>
+                <text x="224" y="68">the</text>
+                <text x="268" y="68">tunnel</text>
+                <text x="308" y="68">is</text>
+                <text x="336" y="68">one</text>
+                <text x="384" y="68">hop)...</text>
+                <text x="444" y="68">bundle</text>
+                <text x="480" y="68">B</text>
+                <text x="48" y="116">(forwarding</text>
+                <text x="120" y="116">path)</text>
+                <text x="396" y="116">(application</text>
+                <text x="476" y="116">agent)</text>
+                <text x="32" y="132">v</text>
+                <text x="456" y="132">|</text>
+                <text x="72" y="164">encapsulation</text>
+                <text x="456" y="164">decapsulation</text>
+                <text x="68" y="180">function</text>
+                <text x="456" y="180">element</text>
+                <text x="72" y="228">sources</text>
+                <text x="132" y="228">bundle</text>
+                <text x="168" y="228">E</text>
+                <text x="368" y="228">payload</text>
+                <text x="412" y="228">of</text>
+                <text x="432" y="228">E</text>
+                <text x="76" y="244">(payload</text>
+                <text x="144" y="244">carries</text>
+                <text x="188" y="244">B,</text>
+                <text x="376" y="244">delivered</text>
+                <text x="428" y="244">to</text>
+                <text x="84" y="260">destined</text>
+                <text x="136" y="260">for</text>
+                <text x="168" y="260">the</text>
+                <text x="352" y="260">the</text>
+                <text x="392" y="260">decap</text>
+                <text x="72" y="276">decap</text>
+                <text x="136" y="276">endpoint)</text>
+                <text x="372" y="276">endpoint</text>
+                <text x="32" y="308">BPA</text>
+                <text x="72" y="308">--CLA</text>
+                <text x="140" y="308">node</text>
+                <text x="184" y="308">--CLA</text>
+                <text x="248" y="308">...</text>
+                <text x="288" y="308">--CLA</text>
+                <text x="352" y="308">BPA</text>
+                <text x="124" y="324">ordinary</text>
+                <text x="180" y="324">BPv7</text>
+                <text x="244" y="324">forwarding</text>
+                <text x="300" y="324">of</text>
+                <text x="340" y="324">bundle</text>
+                <text x="376" y="324">E</text>
+              </g>
+            </svg><a href="#section-3-4.1.1" class="pilcrow">¶</a>
+</div>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
 <a href="#name-functional-model-encapsulat" class="selfRef">Functional model: encapsulation of bundle B in bundle E</a>

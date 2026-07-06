@@ -2,14 +2,14 @@
 
 
 
-Delay/Disruption Tolerant Networking                      R. Taylor, Ed.
+Network Working Group                                     R. Taylor, Ed.
 Internet-Draft                                      Aalyria Technologies
 Intended status: Standards Track                             6 July 2026
 Expires: 7 January 2027
 
 
                      Bundle-in-Bundle Encapsulation
-                      draft-dtn-taylor-bibe-latest
+                      draft-taylor-dtn-bibe-latest
 
 Abstract
 
@@ -26,13 +26,18 @@ About This Document
 
    This note is to be removed before publishing as an RFC.
 
-   Status information for this document may be found at
-   https://datatracker.ietf.org/doc/draft-dtn-taylor-bibe/.
+   The latest revision of this draft can be found at
+   https://ricktaylor.github.io/bibe/draft-taylor-dtn-bibe.html.  Status
+   information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-taylor-dtn-bibe/.
 
    Discussion of this document takes place on the Delay/Disruption
    Tolerant Networking Working Group mailing list (mailto:dtn@ietf.org),
    which is archived at https://mailarchive.ietf.org/arch/browse/dtn/.
    Subscribe at https://www.ietf.org/mailman/listinfo/dtn/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/ricktaylor/bibe.
 
 Status of This Memo
 
