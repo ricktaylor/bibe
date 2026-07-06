@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Bundle-in-Bundle Encapsulation</title>
+<meta content="Rick Taylor" name="author">
+<meta content="
+       This document describes Bundle-in-Bundle Encapsulation (BIBE), a Delay-Tolerant Networking (DTN) Bundle Protocol (BP) tunneling mechanism by which a bundle is carried as the payload of one or more encapsulating bundles, allowing security measures, routing policy, and protocol version translation to be applied to the encapsulating bundle without modification of the encapsulated bundle. The protocol includes an optional segmentation mechanism, allowing a large encapsulated bundle to be carried in multiple encapsulating bundles. 
+    " name="description">
+<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="DTN" name="keyword">
+<meta content="BPv7" name="keyword">
+<meta content="Bundle Protocol" name="keyword">
+<meta content="Encapsulation" name="keyword">
+<meta content="draft-dtn-taylor-bibe-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.34.0
+    Python 3.14.5
+    ConfigArgParse 1.7.5
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.10.0
+    pycountry 24.6.1
+    PyYAML 6.0.3
+    requests 2.33.1
+    wcwidth 0.8.2
+-->
+<link href="draft-dtn-taylor-bibe.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1 {
+  &#title {
+    font-size: 32px;
+    line-height: 40px;
+    clear: both;
+    margin: 1.5em 0 0.2em;
+  }
+  &#rfcnum {
+    margin: 1.5em 0 0.2em;
+    & + h1#title {
+      margin: 0.2em 0;
+    }
+  }
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+  & code, & samp, & tt {
+    font-size: 16px;
+    line-height: 0;
+  }
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    margin: 0;
+    float: right;
+    clear: both;
+  }
+  & > *:nth-child(2) {
+    clear: both;
+    display: block;
+    border: none;
+  }
+}
+svg {
+  display: block;
+  /* font-family isn't space-separated, but =~ will have to do */
+  &[font-family~="monospace" i], & [font-family~="monospace" i] {
+    font-family: var(--font-mono);
+  }
+}
+.alignCenter {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+       support flexbox yet.
+    */
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+      float: none;
+    }
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+
+  &:not(.dlNewline) > dt {
+    float: left;
+    margin-right: 2ch;
+    min-width: 8ch;
+  }
+  & > dd {
+    margin-bottom: .8em;
+    margin-left: var(--indent) !important; /* stupid element overrides */
+    min-height: 2ex;
+  }
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a {
+  text-decoration: none;
+  &[href] {
+    color: var(--link-color);
+    &:hover { text-decoration: underline; }
+    &.selfRef {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+        background-color: var(--highlight-color);
+      }
+    }
+  }
+}
+.iref + a[href].internal {
+  color: var(--text-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+  & blockquote {
+    margin: 0.8em 0.4em 0.4em;
+  }
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) {
+    & p {
+      margin: -2px 0;
+      max-height: 0;
+      transition: max-height 2s ease, margin 0.5s ease 0.5s;
+      overflow: hidden;
+    }
+    &:hover p,
+    & h2:target ~ p {
+      margin: 0.5em 0;
+      max-height: 500px;
+      overflow: auto;
+    }
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  &.right { margin-left: auto; }
+  &.center { margin-left: auto; margin-right: auto; }
+  &.left { margin-right: auto; }
+  & .text-left { text-align: left; }
+  & .text-center { text-align: center; }
+  & .text-right { text-align: right; }
+  & caption {
+    margin: 0;
+    padding: 3px 0 3px 1em;
+  }
+  & p { margin: 0; }
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+  @media not print {
+    :hover > &, &:focus {
+      opacity: 1;
+    }
+    &[href]:hover {
+      color: var(--pilcrow-strong);
+      background-color: transparent;
+    }
+  }
+  @media print {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+  & .prepared {
+    float: right;
+  }
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses {
+    & > section {
+      column-count: 2;
+      column-gap: 20px;
+    }
+    & > section > h2 {
+      column-span: all;
+    }
+    /* hack for break-inside: avoid-column */
+    & address {
+      display: inline-block;
+      break-inside: avoid-column;
+    }
+  }
+}
+
+/* Comments */
+.rfcEditorRemove {
+  & p:first-of-type {
+    font-style: italic;
+  }
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc {
+    & nav {
+      font-family: var(--font-title);
+      font-weight: 360;
+      & > ul { margin-bottom: 2em; }
+      & ul {
+        margin: 0 0 0 4px;
+        & :is(p, li) {
+          margin: 2px 0;
+        }
+      }
+    }
+    & a.toplink {
+      float: right;
+    }
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+    & h2 {
+      margin: 0;
+      padding: 2px 0 2px 6px;
+      padding-right: 1em;
+      font-size: 18px;
+      line-height: 24px;
+      min-width: 190px;
+      text-align: right;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      &::before { /* css hamburger */
+        float: right;
+        position: relative;
+        width: 1em;
+        height: 1px;
+        left: -164px;
+        margin: 8px 0 0 0;
+        background: white none repeat scroll 0 0;
+        box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+        content: "";
+      }
+    }
+    & nav {
+      display: none;
+      background-color: var(--background-color);
+      padding: 0.5em 1em 1em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      height: calc(100vh - 48px);
+      border-left: 1px solid #ddd;
+    }
+    &.active {
+      opacity: 1;
+      & nav { display: block; }
+    }
+    /* Make the collapsed ToC header render white on gray also when it's a link */
+    & h2 a,
+    & h2 a:is(:link, :focus, :hover),
+    & a.toplink,
+    & a.toplink:hover {
+      color: white;
+      background-color: #444;
+      text-decoration: none;
+    }
+    & a.toplink {
+      margin: 2px 0.5em 0;
+    }
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    & h2 {
+      margin: 0;
+      padding: 0.25em 1em 1em 0;
+    }
+    & nav {
+      display: block;
+      height: calc(90vh - 84px);
+      bottom: 0;
+      padding: 0.5em 0 2em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    & a.toplink {
+      margin: 8px 0.5em 0;
+    }
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc {
+    page-break-before: always;
+    border-top: none;
+    padding-top: 0;
+  }
+  #n-introduction {
+    page-break-before: always;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg {
+  & :is([stroke="black"], [stroke^="#000"]) {
+    stroke: var(--text-color);
+  }
+  & :is([stroke="white"], [stroke^="#fff"]) {
+    stroke: var(--background-color);
+  }
+  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+    fill: var(--text-color);
+  }
+  & :is([fill="white"], [fill^="#fff"]) {
+    fill: var(--background-color);
+  }
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">BIBE</td>
+<td class="right">July 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Taylor</td>
+<td class="center">Expires 7 January 2027</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Delay/Disruption Tolerant Networking</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-dtn-taylor-bibe-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-07-06" class="published">6 July 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2027-01-07">7 January 2027</time></dd>
+<dt class="label-authors">Author:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">R. Taylor, <span class="editor">Ed.</span>
+</div>
+<div class="org">Aalyria Technologies</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Bundle-in-Bundle Encapsulation</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document describes Bundle-in-Bundle Encapsulation (BIBE), a Delay-Tolerant Networking (DTN) Bundle Protocol (BP) tunneling mechanism by which a bundle is carried as the payload of one or more encapsulating bundles, allowing security measures, routing policy, and protocol version translation to be applied to the encapsulating bundle without modification of the encapsulated bundle. The protocol includes an optional segmentation mechanism, allowing a large encapsulated bundle to be carried in multiple encapsulating bundles.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-dtn-taylor-bibe/">https://datatracker.ietf.org/doc/draft-dtn-taylor-bibe/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        Delay/Disruption Tolerant Networking Working Group mailing list (<span><a href="mailto:dtn@ietf.org">mailto:dtn@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/dtn/">https://mailarchive.ietf.org/arch/browse/dtn/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/dtn/">https://www.ietf.org/mailman/listinfo/dtn/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 7 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-use-cases" class="internal xref">Use Cases</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-similarity-to-ip-tunneling" class="internal xref">Similarity to IP Tunneling</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-functional-model" class="internal xref">Functional Model</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-procedures" class="internal xref">Procedures</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-transmission" class="internal xref">Transmission</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-segmentation" class="internal xref">Segmentation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-transfer-ids" class="internal xref">Transfer IDs</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-reception" class="internal xref">Reception</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5">
+                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-reassembly" class="internal xref">Reassembly</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.6">
+                <p id="section-toc.1-1.4.2.6.1"><a href="#section-4.6" class="auto internal xref">4.6</a>.  <a href="#name-reassembly-state" class="internal xref">Reassembly State</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-the-encapsulating-bundle" class="internal xref">The Encapsulating Bundle</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-primary-block" class="internal xref">Primary Block</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-extension-blocks" class="internal xref">Extension Blocks</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-payload" class="internal xref">Payload</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-deployment-considerations" class="internal xref">Deployment Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-diagnostics" class="internal xref">Diagnostics</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-composition-with-bpsec" class="internal xref">Composition with BPSec</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-circumvention-of-policy-enf" class="internal xref">Circumvention of Policy Enforcement</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-spoofing-of-the-encapsulate" class="internal xref">Spoofing of the Encapsulated Bundle</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
+                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-resource-exhaustion" class="internal xref">Resource Exhaustion</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-cddl-expression" class="internal xref">CDDL Expression</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-contributors" class="internal xref">Contributors</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">Bundle Protocol version 7 (BPv7) <span>[<a href="#RFC9171" class="cite xref">RFC9171</a>]</span> defines a layered architecture in which a Bundle Protocol Agent (BPA) relies on convergence-layer adapters (CLAs) to transfer bundles between nodes. This document defines Bundle-in-Bundle Encapsulation (BIBE), in which the transfer between two nodes is performed by a BP network itself: an outbound bundle (the "encapsulated bundle") is carried as the payload of one or more bundles (the "encapsulating bundles") which traverse the BP network between the encapsulating node and the decapsulating node in the normal manner. <span class="cref" id="editorial">This document is an editorial consolidation of prior work: the architecture and concepts originate in draft-ietf-dtn-bibect and the CCSDS Bundle-in-Bundle Encapsulation effort, and the design contributions of others are recorded in the Contributors and Acknowledgments sections. The editor claims no design novelty; the contribution of this document is to restate that body of work as a single self-contained specification.</span><a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">BIBE thus occupies the architectural position of a convergence layer — the "link layer" beneath it is itself a BP network — but this document deliberately does not require that it be implemented as a convergence-layer adapter; it specifies observable behavior only, in terms of the encapsulation function and decapsulation element defined in <a href="#model" class="auto internal xref">Section 3</a>.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">Conformance to this specification is <span class="bcp14">OPTIONAL</span> for BP nodes. A conforming node may implement the encapsulation function, the decapsulation element, or both; a unidirectional tunnel requires only one at each end.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<div id="use-cases">
+<section id="section-1.1">
+        <h3 id="name-use-cases">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-use-cases" class="section-name selfRef">Use Cases</a>
+        </h3>
+<p id="section-1.1-1">BIBE has broad utility; motivating use cases include:<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.1">
+            <p id="section-1.1-2.1.1">Security encapsulation. BPSec <span>[<a href="#RFC9172" class="cite xref">RFC9172</a>]</span> requires that the primary block of a bundle remain in plaintext so that it can be routed. Encapsulating a bundle allows a Bundle Confidentiality Block on the encapsulating bundle's payload to encrypt the entire encapsulated bundle, including its source and destination, providing a defense against traffic analysis that BPSec alone cannot offer.<a href="#section-1.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-2.2">
+            <p id="section-1.1-2.2.1">Cross-domain and service-provider encapsulation. A bundle arriving at the edge of a network domain can be encapsulated so that domain-specific policies (forwarding, quality of service, security) are applied to the encapsulating bundle, leaving the encapsulated bundle unmodified. The encapsulating bundle egresses the domain at a designated decapsulating node.<a href="#section-1.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-2.3">
+            <p id="section-1.1-2.3.1">Version encapsulation. A Bundle Protocol version 6 <span>[<a href="#RFC5050" class="cite xref">RFC5050</a>]</span> bundle can be encapsulated for carriage across a BPv7 network, or vice versa.<a href="#section-1.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-2.4">
+            <p id="section-1.1-2.4.1">Segmentation. BPv7 bundle fragmentation (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.8" class="relref">Section 5.8</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>) is incompatible with some BPSec deployments and is prohibited for bundles bearing certain security blocks. The segmentation mechanism defined in this document (<a href="#segmentation" class="auto internal xref">Section 4.2</a>) provides an alternative: a large bundle is carried opaquely as chunks in multiple smaller encapsulating bundles, which is of particular utility when a downstream convergence-layer adapter cannot carry large bundles.<a href="#section-1.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-2.5">
+            <p id="section-1.1-2.5.1">Traffic differentiation. Decapsulation endpoints are ordinary endpoints established by policy (<a href="#model" class="auto internal xref">Section 3</a>), so a decapsulating node may establish several — per tunnel, per peer, or per traffic class — at no protocol cost. The destination EID of each encapsulating bundle then acts as a flow identifier visible along the encapsulating path: nodes on the tunnel path can apply forwarding, queueing, and quality-of-service policy to tunnel traffic by destination EID alone, without inspecting the payload — including when the payload is encrypted. The same visibility necessarily reveals that class structure to on-path observers (<a href="#security-considerations" class="auto internal xref">Section 7</a>).<a href="#section-1.1-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-1.1-3">As in <span>[<a href="#BTPU" class="cite xref">BTPU</a>]</span>, the encapsulated bundle is treated throughout as an opaque sequence of octets: no field of this protocol identifies its format, and nothing in the procedures of this document depends upon it. Bundles of different Bundle Protocol versions can therefore be carried, and multiplexed to the same decapsulation endpoint, without an explicit discriminator: a receiver can distinguish the formats by simple examination of the initial octets of the decapsulated data (a BPv6 bundle begins with the octet 0x06, the BPv6 version number, whereas a BPv7 bundle begins with the initial octet of a CBOR array). Indeed, any binary data can be carried; the disposition of decapsulated data that is not a bundle is beyond the scope of this document and is a matter for the receiving implementation.<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+<p id="section-1.1-4">Encapsulating bundles are themselves bundles and may in turn be encapsulated, enabling nested encapsulation to arbitrary depth as required by policy.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="similarity-to-ip-tunneling">
+<section id="section-1.2">
+        <h3 id="name-similarity-to-ip-tunneling">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-similarity-to-ip-tunneling" class="section-name selfRef">Similarity to IP Tunneling</a>
+        </h3>
+<p id="section-1.2-1">BIBE shares a pattern with generic IP tunneling, and this document deliberately follows the same architectural conventions where the analogy holds:<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2-2.1">
+            <p id="section-1.2-2.1.1">Like GRE <span>[<a href="#GRE" class="cite xref">GRE</a>]</span> and IP-in-IP <span>[<a href="#IPIP" class="cite xref">IPIP</a>]</span>, BIBE is a stateless encapsulation: there is no tunnel session, no negotiation, and no convergence-layer acknowledgement. The tunnel is defined entirely by configuration at its two endpoints.<a href="#section-1.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-2.2">
+            <p id="section-1.2-2.2.1">Encapsulation is a tunnel ingress operation: routing or forwarding policy directs an encapsulated bundle "into" the tunnel exactly as an IP route directs a packet to a tunnel interface. An implementation that realizes the encapsulation function as a virtual interface (a convergence-layer adapter) selected by a forwarding table entry mirrors a multipoint GRE interface; an implementation that applies it as egress policy mirrors policy-based tunnel selection. Either way, a single encapsulation function may serve multiple decapsulation endpoints — and, conversely, several decapsulation endpoints at one node give the encapsulating node a per-class tunnel selector, in the manner of the GRE Key field <span>[<a href="#GREKEY" class="cite xref">GREKEY</a>]</span> (<a href="#use-cases" class="auto internal xref">Section 1.1</a>).<a href="#section-1.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-2.3">
+            <p id="section-1.2-2.3.1">Applying a Bundle Confidentiality Block to the encapsulating bundle's payload is the analog of IPsec tunnel mode: the entire inner datagram, including its addressing, is protected, whereas BPSec applied directly to a bundle (like transport mode) must leave the primary block in plaintext for routing.<a href="#section-1.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-2.4">
+            <p id="section-1.2-2.4.1">The segmentation mechanism of <a href="#segmentation" class="auto internal xref">Section 4.2</a> is the analog of "outer fragmentation" in IP tunnels (<span>[<a href="#TUNMTU" class="cite xref">TUNMTU</a>]</span>): the tunneled payload is divided by and reassembled at the tunnel endpoints, transparently to the encapsulated bundle, rather than fragmenting the encapsulated bundle itself ("inner fragmentation", i.e. BPv7 bundle fragmentation) which alters the tunneled data unit and interacts poorly with BPSec.<a href="#section-1.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-1.2-3">IP tunneling experience also carries over its known hazards: recursive encapsulation loops (see <a href="#deployment" class="auto internal xref">Section 6</a>) and the security concerns cataloged in <span>[<a href="#TUNSEC" class="cite xref">TUNSEC</a>]</span> (see <a href="#security-considerations" class="auto internal xref">Section 7</a>).<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<div id="terminology">
+<section id="section-2.1">
+        <h3 id="name-terminology">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+        </h3>
+<span class="break"></span><dl class="dlParallel" id="section-2.1-1">
+          <dt id="section-2.1-1.1">Encapsulated bundle:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-1.2">
+            <p id="section-2.1-1.2.1">A bundle, of any Bundle Protocol version, forwarded by encapsulation and carried opaquely as (part of) the payload of one or more encapsulating bundles.<a href="#section-2.1-1.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-1.3">Encapsulating bundle:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-1.4">
+            <p id="section-2.1-1.4.1">A BPv7 bundle whose payload encapsulates all or part of another bundle, formatted as described in <a href="#payload-format" class="auto internal xref">Section 5.3</a>. The payload takes one of two forms: a "whole-bundle payload" carrying an entire encapsulated bundle, or a "segment payload" carrying part of one.<a href="#section-2.1-1.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-1.5">Encapsulation function:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-1.6">
+            <p id="section-2.1-1.6.1">The function of an encapsulating node that generates encapsulation payloads from a bundle being forwarded and sources the encapsulating bundles that carry them. See <a href="#model" class="auto internal xref">Section 3</a>.<a href="#section-2.1-1.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-1.7">Decapsulation element:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-1.8">
+            <p id="section-2.1-1.8.1">The element of the application agent of a decapsulating node that takes delivery of encapsulation payloads, performs reassembly when required, and presents encapsulated bundles to the BPA. See <a href="#model" class="auto internal xref">Section 3</a>.<a href="#section-2.1-1.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-1.9">Decapsulation endpoint:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-1.10">
+            <p id="section-2.1-1.10.1">An endpoint in which a decapsulation element is registered; the destination endpoint of encapsulating bundles.<a href="#section-2.1-1.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-1.11">Transfer:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-1.12">
+            <p id="section-2.1-1.12.1">The context in which the segments of a single encapsulated bundle are transmitted, identified by a Transfer ID.<a href="#section-2.1-1.12.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="model">
+<section id="section-3">
+      <h2 id="name-functional-model">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-functional-model" class="section-name selfRef">Functional Model</a>
+      </h2>
+<p id="section-3-1">BIBE is specified as observable behavior, not as a component architecture, in terms of two entities:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3-2.1">
+          <p id="section-3-2.1.1">An "encapsulation function", invoked by the BPA of the encapsulating node in the course of forwarding a bundle: it generates one or more payloads, each encapsulating all or part of the bundle being forwarded, and, acting in the capacity of a bundle source, sources the encapsulating bundles that carry them (<a href="#transmission" class="auto internal xref">Section 4.1</a>). Each encapsulating bundle is a new bundle, originated at the encapsulating node; see <a href="#encap-bundle" class="auto internal xref">Section 5</a>.<a href="#section-3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-3-2.2">
+          <p id="section-3-2.2.1">A "decapsulation element", registered in one or more endpoints of the decapsulating node: it takes delivery of the payloads of encapsulating bundles, performs reassembly when required, and presents encapsulated bundles to the BPA for forwarding and/or delivery in the standard manner (<a href="#reception" class="auto internal xref">Section 4.4</a>).<a href="#section-3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-3-3"><a href="#fig-model" class="auto internal xref">Figure 1</a> illustrates the asymmetry of the model: the encapsulation function operates on the forwarding path of the encapsulating node, while the decapsulation element is an element of the application agent of the decapsulating node; the encapsulated bundle experiences the entire tunnel as a single hop.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<span id="name-functional-model-encapsulat"></span><div id="fig-model">
+<figure id="figure-1">
+        <div class="alignLeft art-text artwork" id="section-3-4.1">
+<pre>
+      Encapsulating Node                    Decapsulating Node
+
+ bundle B ...(to bundle B, the tunnel is one hop)... bundle B
+    |                                                    ^
+    |                                                    |
+ (forwarding path)                          (application agent)
+    v                                                    |
+ +--------------+                                +--------------+
+ | encapsulation|                                | decapsulation|
+ |   function   |                                |    element   |
+ +--------------+                                +--------------+
+    |                                                    ^
+    | sources bundle E                     payload of E  |
+    | (payload carries B,                  delivered to  |
+    |  destined for the                    the decap     |
+    |  decap endpoint)                     endpoint      |
+    v                                                    |
+   BPA --CLA--&gt; node --CLA--&gt; ... --CLA--&gt; BPA ----------+
+            ordinary BPv7 forwarding of bundle E
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-functional-model-encapsulat" class="selfRef">Functional model: encapsulation of bundle B in bundle E</a>
+        </figcaption></figure>
+</div>
+<p id="section-3-5">How a BPA selects the encapsulation function is an implementation matter: it might be realized as a convergence-layer adapter selected by a forwarding table entry, applied as a filter or transform on the egress forwarding path, or integrated in some other way. Nothing in this document depends on the choice.<a href="#section-3-5" class="pilcrow">¶</a></p>
+<p id="section-3-6">The decapsulation element, by contrast, cannot be a convergence-layer adapter: it must take delivery of the payloads of bundles addressed to it, and it therefore <span class="bcp14">MUST</span> be registered in one or more endpoints — in the terms of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-3.2" class="relref">Section 3.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, it is an element of the node's application agent.<a href="#section-3-6" class="pilcrow">¶</a></p>
+<p id="section-3-7">The choice of endpoints in which a decapsulation element is registered is a matter of administrative policy at the decapsulating node. A BIBE tunnel is a deliberate, bilaterally configured arrangement — an encapsulating node must in any case hold per-peer configuration (<a href="#deployment" class="auto internal xref">Section 6</a>), of which the decapsulation endpoint ID is simply one element — so there is no unsolicited-contact scenario for which a "well-known service" convention would be required, and the absence of one denies adversaries a predictable target for unsolicited traffic (<a href="#security-considerations" class="auto internal xref">Section 7</a>). A decapsulation endpoint <span class="bcp14">SHOULD</span> be a singleton endpoint. The Bundle Protocol does not specify which member or members of an endpoint with more than one member take delivery of any particular bundle; the consequences of this for BIBE — duplication of whole-bundle payloads, and segmented transfers that can never be reassembled — are set out in <a href="#segmentation" class="auto internal xref">Section 4.2</a>.<a href="#section-3-7" class="pilcrow">¶</a></p>
+<p id="section-3-8">Note that BIBE encapsulation is a forwarding operation, not a delivery operation: policy (including BPSec) applicable to the forwarding path of the encapsulating bundle applies to it in the normal way. The payloads generated by the encapsulation function are plaintext; any confidentiality protection is applied by the BPA in the course of transmitting the encapsulating bundle, exactly as for any other bundle payload.<a href="#section-3-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="procedures">
+<section id="section-4">
+      <h2 id="name-procedures">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-procedures" class="section-name selfRef">Procedures</a>
+      </h2>
+<div id="transmission">
+<section id="section-4.1">
+        <h3 id="name-transmission">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-transmission" class="section-name selfRef">Transmission</a>
+        </h3>
+<p id="section-4.1-1">When the BPA of the encapsulating node determines — by forwarding table entry, forwarding policy, or other configuration — that a bundle is to be forwarded by encapsulation toward a specified decapsulation endpoint, the bundle is presented to the encapsulation function.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">The bundle so presented is the bundle as the encapsulating node forwards it: encapsulation is a forwarding operation (<a href="#model" class="auto internal xref">Section 3</a>), and the forwarding-time processing that would precede transmission over any convergence-layer adapter — in particular the Previous Node block replacement of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.4.1" class="relref">Section 4.4.1</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, subject to the encapsulating node's policy — <span class="bcp14">SHOULD</span> be applied to the bundle before its octets are captured for encapsulation. The consequences for the blocks of the encapsulated bundle are set out in <a href="#encap-bundle" class="auto internal xref">Section 5</a>.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.1-3">The encapsulation function then generates the payload or payloads:<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1-4.1">
+            <p id="section-4.1-4.1.1">If the length of the bundle does not exceed the segmentation threshold for that endpoint (<a href="#segmentation" class="auto internal xref">Section 4.2</a>), the encapsulation function <span class="bcp14">SHALL</span> generate a single whole-bundle payload encapsulating the entire bundle, and <span class="bcp14">SHALL</span> request transmission of an encapsulating bundle, destined for that endpoint, carrying that payload. A bundle that can be carried whole <span class="bcp14">SHOULD NOT</span> be segmented.<a href="#section-4.1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.1-4.2">
+            <p id="section-4.1-4.2.1">Otherwise the bundle <span class="bcp14">SHALL</span> be segmented as described in <a href="#segmentation" class="auto internal xref">Section 4.2</a>. If the bundle cannot be segmented — the encapsulation function does not support segmentation, or the decapsulation element is not known to support reassembly (<a href="#reception" class="auto internal xref">Section 4.4</a>) — then forwarding by encapsulation has failed, and the forwarding contraindication procedures of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.4" class="relref">Section 5.4</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span> apply at the encapsulating node as for a failure of any convergence layer.<a href="#section-4.1-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.1-5">The fields and blocks of each encapsulating bundle are populated as described in <a href="#encap-bundle" class="auto internal xref">Section 5</a>.<a href="#section-4.1-5" class="pilcrow">¶</a></p>
+<p id="section-4.1-6">Upon requesting transmission of the encapsulating bundle(s), forwarding of the encapsulated bundle at the encapsulating node is complete; no further state regarding it need be retained. BIBE provides no acknowledgement of its own, so "complete" means successful hand-off to the underlying network, as with any unreliable convergence layer (<a href="#deployment" class="auto internal xref">Section 6</a>).<a href="#section-4.1-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="segmentation">
+<section id="section-4.2">
+        <h3 id="name-segmentation">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-segmentation" class="section-name selfRef">Segmentation</a>
+        </h3>
+<p id="section-4.2-1">For each decapsulation endpoint to which encapsulating bundles will be sent, a maximum segment size — the endpoint's "segmentation threshold" — <span class="bcp14">SHALL</span> be established by a-priori configuration (<a href="#deployment" class="auto internal xref">Section 6</a>). The segmentation threshold accommodates, for example, size limits of convergence-layer adapters on the path of the encapsulating bundles. Note that the threshold bounds encapsulated-bundle octets per encapsulating bundle: an implementation sizing encapsulating bundles for a downstream limit must also account for the encapsulating bundle's own overhead (primary block, extension blocks, payload CBOR framing, and any BPSec blocks).<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">The segmentation mechanism is aligned with the transfer/segment model of <span>[<a href="#BTPU" class="cite xref">BTPU</a>]</span>, but requires none of BTPU's padding, message framing, or transfer-window machinery: BPv7 itself provides the "framing layer", guaranteeing that the payload of each encapsulating bundle is delivered whole or not at all, so only segment identification and reassembly rules are needed.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-3">When a bundle is to be segmented:<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2-4.1">
+            <p id="section-4.2-4.1.1">The encapsulation function <span class="bcp14">SHALL</span> assign the transfer a Transfer ID as described in <a href="#transfer-ids" class="auto internal xref">Section 4.3</a>.<a href="#section-4.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.2-4.2">
+            <p id="section-4.2-4.2.1">The encapsulation function <span class="bcp14">SHALL</span> partition the octets of the bundle into two or more segments, each no larger than the segmentation threshold, covering every octet of the bundle exactly once, in order, without alteration.<a href="#section-4.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.2-4.3">
+            <p id="section-4.2-4.3.1">For each segment the encapsulation function <span class="bcp14">SHALL</span> generate a segment payload with the common transfer-id, the total length of the bundle, the segment's offset, and the segment's octets, and <span class="bcp14">SHALL</span> request transmission of an encapsulating bundle, destined for the indicated endpoint, carrying that payload.<a href="#section-4.2-4.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.2-5">Segmentation requires that every segment of a transfer be delivered to the same decapsulation element: reassembly state is held by the element that takes delivery (<a href="#reassembly" class="auto internal xref">Section 4.5</a>), and a transfer whose segments are divided among different elements can never complete. When a decapsulation endpoint has more than one member node, the Bundle Protocol does not specify which member takes delivery of any particular bundle, so distinct encapsulating bundles of one transfer may be delivered to different members; each member then accumulates a disjoint, incomplete set of segments, and the transfer fails silently at its expiry. Accordingly, an encapsulating node <span class="bcp14">MUST NOT</span> segment a bundle toward a decapsulation endpoint unless that endpoint is known to be a singleton endpoint — by the rules of the EID's scheme (every 'ipn' scheme EID identifies a singleton endpoint, <span><a href="https://rfc-editor.org/rfc/rfc9758#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9758" class="cite xref">RFC9758</a>]</span>) or by configuration. Whole-bundle payloads are not subject to this constraint: any member taking delivery holds the entire encapsulated bundle, although delivery to more than one member duplicates the encapsulated bundle at each.<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="transfer-ids">
+<section id="section-4.3">
+        <h3 id="name-transfer-ids">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-transfer-ids" class="section-name selfRef">Transfer IDs</a>
+        </h3>
+<p id="section-4.3-1">Transfer IDs are unsigned integers that identify a transfer uniquely within the scope of the pair (encapsulating node, decapsulation endpoint). The scope is the encapsulating node itself, not any particular node ID it uses: however many node IDs a node holds (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.2.5.2" class="relref">Section 4.2.5.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>), it draws from a single Transfer ID space per decapsulation endpoint. A Transfer ID carries no ordering semantics: a decapsulation element <span class="bcp14">MUST NOT</span> infer transmission order, recency, or loss from the numeric values of Transfer IDs. There is no analog of the transfer window of <span>[<a href="#BTPU" class="cite xref">BTPU</a>]</span>: the temporal bound on a transfer is provided by bundle expiry, since the Bundle Protocol guarantees that no bundle is delivered after the end of its lifetime.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-2">An encapsulating node <span class="bcp14">MUST NOT</span> assign a Transfer ID that identifies another transfer, to the same decapsulation endpoint, any of whose encapsulating bundles have yet to expire. Because every encapsulating bundle of a transfer shares a single expiry time (<a href="#primary-block" class="auto internal xref">Section 5.1</a>), a Transfer ID becomes safely reusable at exactly the transfer's expiry time. Subject to this rule, the assignment strategy is an implementation matter: sequential assignment is one convenient choice, but random assignment is equally valid. To satisfy the rule across restarts of the encapsulating node, an implementation <span class="bcp14">SHOULD</span> either persist sufficient assignment state or select Transfer IDs after restart in a manner unlikely to collide with transfers still in flight (e.g. derived from a timestamp). <span class="cref" id="tidsize">CBOR uints are variable-length with no fixed wrap point, and the encoding stays small (1–5 octets) for realistic values, so there is no pressure to keep the identifier space compact.</span><a href="#section-4.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="reception">
+<section id="section-4.4">
+        <h3 id="name-reception">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-reception" class="section-name selfRef">Reception</a>
+        </h3>
+<p id="section-4.4-1">Upon delivery of the payload of an encapsulating bundle to a decapsulation element:<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.4-2.1">
+            <p id="section-4.4-2.1.1">If the payload is a whole-bundle payload, the encapsulated bundle <span class="bcp14">SHALL</span> be presented to the BPA, whereupon reception proceeds as defined in <span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.6" class="relref">Section 5.6</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>: the encapsulated bundle may be forwarded, delivered, etc. Where the decapsulated data is not a BPv7 bundle (see <a href="#use-cases" class="auto internal xref">Section 1.1</a>), its disposition is determined by examination of its initial octets and is an implementation matter — e.g. presentation of a BPv6 bundle to a BPv6 agent.<a href="#section-4.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.4-2.2">
+            <p id="section-4.4-2.2.1">If the payload is a segment payload and the decapsulation element does not support reassembly, the element <span class="bcp14">SHALL</span> discard the payload. Support for reassembly is <span class="bcp14">OPTIONAL</span>; support for generating segments is likewise <span class="bcp14">OPTIONAL</span>.<a href="#section-4.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.4-2.3">
+            <p id="section-4.4-2.3.1">If the payload is a segment payload and the decapsulation element supports reassembly, the payload <span class="bcp14">SHALL</span> be processed as described in <a href="#reassembly" class="auto internal xref">Section 4.5</a>.<a href="#section-4.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="reassembly">
+<section id="section-4.5">
+        <h3 id="name-reassembly">
+<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-reassembly" class="section-name selfRef">Reassembly</a>
+        </h3>
+<p id="section-4.5-1">A decapsulation element maintains a reassembly structure per active transfer, keyed by the pair (source node ID of the encapsulating bundle, transfer-id). Source node IDs are compared literally, as EIDs: a decapsulation element is not required to determine whether two distinct EIDs name the same node, and the source consistency rule of <a href="#primary-block" class="auto internal xref">Section 5.1</a> ensures that literal comparison suffices. The nature of the reassembly structure is an implementation matter.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<p id="section-4.5-2">Upon processing a segment payload:<a href="#section-4.5-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.5-3.1">
+            <p id="section-4.5-3.1.1">If segment-offset plus the length of encapsulated-data exceeds total-length, the payload is malformed: the decapsulation element <span class="bcp14">SHALL</span> discard it and <span class="bcp14">SHOULD</span> discard the reassembly structure for the transfer, if any.<a href="#section-4.5-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.5-3.2">
+            <p id="section-4.5-3.2.1">If a reassembly structure for the transfer exists and the payload's total-length differs from the transfer's previously recorded total-length, the transfer is corrupt: the decapsulation element <span class="bcp14">SHALL</span> discard the payload and the reassembly structure.<a href="#section-4.5-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.5-3.3">
+            <p id="section-4.5-3.3.1">The BP network may duplicate encapsulating bundles (multi-path forwarding, repetition at lower layers), so identical duplicates are normal and benign: if the octets of the segment duplicate octet ranges already received with identical content, the duplicate octets <span class="bcp14">MAY</span> be ignored. If they overlap previously received ranges with differing content, the transfer is corrupt: the decapsulation element <span class="bcp14">SHALL</span> discard the payload and the reassembly structure.<a href="#section-4.5-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.5-3.4">
+            <p id="section-4.5-3.4.1">Otherwise the decapsulation element <span class="bcp14">SHALL</span> insert the segment into the reassembly structure.<a href="#section-4.5-3.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.5-3.5">
+            <p id="section-4.5-3.5.1">If, after insertion, every octet in the range zero to total-length has been received, reassembly is complete: the reassembled encapsulated bundle <span class="bcp14">SHALL</span> be presented to the BPA, whereupon reception proceeds as defined in <span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.6" class="relref">Section 5.6</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, and the reassembly structure <span class="bcp14">SHALL</span> be discarded.<a href="#section-4.5-3.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="resources">
+<section id="section-4.6">
+        <h3 id="name-reassembly-state">
+<a href="#section-4.6" class="section-number selfRef">4.6. </a><a href="#name-reassembly-state" class="section-name selfRef">Reassembly State</a>
+        </h3>
+<p id="section-4.6-1">A decapsulation element retains reassembly state for a transfer only while the transfer can still complete. An incomplete transfer <span class="bcp14">MUST</span> be discarded no later than the transfer's expiry — the single expiry time shared by all encapsulating bundles of the transfer (<a href="#primary-block" class="auto internal xref">Section 5.1</a>) — both because no further segment can arrive after that time, and because the Transfer ID may thereafter be reused for a new transfer (<a href="#transfer-ids" class="auto internal xref">Section 4.3</a>): reassembly state retained beyond expiry could wrongly absorb segments of the new transfer.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
+<p id="section-4.6-2">Before that deadline, retention of reassembly state is a matter for the same local resource management policies that govern any other storage the node commits. A transfer whose state is discarded under such policy has simply failed: the encapsulated bundle is never presented to the BPA.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="encap-bundle">
+<section id="section-5">
+      <h2 id="name-the-encapsulating-bundle">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-the-encapsulating-bundle" class="section-name selfRef">The Encapsulating Bundle</a>
+      </h2>
+<p id="section-5-1">An encapsulating bundle is a new bundle, originated by the encapsulating node acting in the capacity of a bundle source; it is not a modified copy of the encapsulated bundle, nor a forwarding of it. No field of the encapsulated bundle's primary block, and no extension block of the encapsulated bundle, is copied to the encapsulating bundle by any rule of this document: the encapsulated bundle contributes octets to the payload, and nothing else.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">The converse also holds: the tunnel contributes nothing to the encapsulated bundle. The encapsulated bundle is immutable while encapsulated — the octets presented to the BPA of the decapsulating node (<a href="#reception" class="auto internal xref">Section 4.4</a>, <a href="#reassembly" class="auto internal xref">Section 4.5</a>) <span class="bcp14">SHALL</span> be exactly the octets captured by the encapsulation function (<a href="#transmission" class="auto internal xref">Section 4.1</a>); neither the encapsulation function nor the decapsulation element modifies them in any way, and any divergence is corruption (<a href="#reassembly" class="auto internal xref">Section 4.5</a>) or an attack (<a href="#security-considerations" class="auto internal xref">Section 7</a>), not processing. This invariance is what allows integrity protection applied to the encapsulated bundle itself to survive the tunnel intact.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">An encapsulating bundle is an ordinary bundle, and its payload is not an administrative record; a decapsulation endpoint <span class="bcp14">MUST NOT</span> be the administrative endpoint of the node. The destination endpoint of an encapsulating bundle is a decapsulation endpoint, which is distinct from the destination of the encapsulated bundle. <span class="cref" id="adminrec">Carrying the payload as ordinary application data at a dedicated endpoint, rather than as an administrative record, avoids any administrative record type allocation, permits multiple decapsulation endpoints per node (e.g. per-tunnel), and keeps the administrative endpoint free of high-volume traffic.</span><a href="#section-5-3" class="pilcrow">¶</a></p>
+<div id="primary-block">
+<section id="section-5.1">
+        <h3 id="name-primary-block">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-primary-block" class="section-name selfRef">Primary Block</a>
+        </h3>
+<p id="section-5.1-1">The fields of the encapsulating bundle's primary block (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.3.1" class="relref">Section 4.3.1</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>) are populated as for any newly created bundle, subject to the following:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.1-2">
+          <dt id="section-5.1-2.1">Destination EID:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.1-2.2">
+            <p id="section-5.1-2.2.1"><span class="bcp14">SHALL</span> be the decapsulation endpoint ID toward which the encapsulated bundle is being forwarded.<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.1-2.3">Source node ID:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.1-2.4">
+            <p id="section-5.1-2.4.1"><span class="bcp14">SHOULD</span> be a node ID of the encapsulating node — the EID of any singleton endpoint in which that node is registered (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.2.5.2" class="relref">Section 4.2.5.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>): anonymous (dtn:none) sourcing defeats the peer authentication measures described in <a href="#security-considerations" class="auto internal xref">Section 7</a>. Note that a node may legitimately hold many node IDs; which of them is used is a matter of policy. When the payload is a segment payload, however, the source node ID <span class="bcp14">MUST NOT</span> be dtn:none, and every encapsulating bundle of the transfer <span class="bcp14">SHALL</span> bear the same source node ID: a decapsulation element identifies a transfer by literal comparison of source node IDs (<a href="#reassembly" class="auto internal xref">Section 4.5</a>), without resolving which node an EID names, so a node holding several node IDs must use one of them consistently throughout a transfer.<a href="#section-5.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.1-2.5">Report-to EID:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.1-2.6">
+            <p id="section-5.1-2.6.1">Set according to the policy of the encapsulating node.<a href="#section-5.1-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.1-2.7">Bundle processing control flags:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.1-2.8">
+            <p id="section-5.1-2.8.1">Set according to the policy of the encapsulating node; the flags of the encapsulated bundle have no bearing on them. The "bundle's payload is an administrative record" flag <span class="bcp14">MUST NOT</span> be set.<a href="#section-5.1-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.1-2.9">Creation timestamp:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.1-2.10">
+            <p id="section-5.1-2.10.1">Set as for any newly created bundle (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.2.7" class="relref">Section 4.2.7</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>); it is unrelated to the creation timestamp of the encapsulated bundle.<a href="#section-5.1-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.1-2.11">Lifetime:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.1-2.12">
+            <p id="section-5.1-2.12.1"><span class="bcp14">SHALL</span> be set such that the expiry time of the encapsulating bundle (creation time plus lifetime) is no later than the expiry time of the encapsulated bundle: the tunnel can never extend the transmission opportunity of the encapsulated bundle — an encapsulating bundle that outlived it would waste network resources carrying data already expired at decapsulation — and this bound underpins the transfer machinery of <a href="#transfer-ids" class="auto internal xref">Section 4.3</a> and <a href="#resources" class="auto internal xref">Section 4.6</a>. The expiry time <span class="bcp14">MAY</span> be earlier than that of the encapsulated bundle, deliberately curtailing the tunnel transit: for example, where it is known that a bundle failing to complete the tunnel sub-path within a certain duration cannot achieve onward delivery within its own lifetime. Where the encapsulated data has no expiry known to the encapsulating node (e.g. arbitrary binary data, <a href="#use-cases" class="auto internal xref">Section 1.1</a>), an expiry bound <span class="bcp14">SHALL</span> be established by a-priori configuration and applied in the same way.<a href="#section-5.1-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-5.1-3">For a segmented transfer, every encapsulating bundle of the transfer <span class="bcp14">SHALL</span> share a single expiry time — the transfer's expiry — regardless of when each is created, so that the expiry of a transfer is well defined at both the encapsulating and decapsulating nodes. Since a bundle's expiry is a quantity derived from its creation time and lifetime (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.5" class="relref">Section 5.5</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>), this is achieved by a rolling calculation: each encapsulating bundle is created with its natural creation timestamp, and its lifetime is set to the interval remaining between its creation and the transfer's expiry. A node without an accurate clock performs the same calculation against locally elapsed time, setting each encapsulating bundle's lifetime to the transfer duration remaining at that bundle's creation and carrying a Bundle Age block as usual (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.4.2" class="relref">Section 4.4.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>). <span class="cref" id="rolling">The alternative — assigning all encapsulating bundles of a transfer an identical creation timestamp — is not viable in general: the sequence number component of the creation timestamp is generated by the source node's BPA as a property of the timestamp mechanism (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.2.7" class="relref">Section 4.2.7</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>), not assignable per transfer, and duplicate (source node ID, creation timestamp) pairs risk the "unexpected network behavior" cautioned against there. The rolling calculation composes with any timestamp generator, and has the useful side effect that later-created encapsulating bundles carry shorter lifetimes, so the network never retains one longer than the transfer it serves.</span><a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1-4">Selection of all other parameters governing the forwarding of encapsulating bundles (priority, security policy, etc.) is likewise a matter for the encapsulating node; the corresponding parameters of the encapsulated bundle <span class="bcp14">MAY</span> be consulted where they are known.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="extension-blocks">
+<section id="section-5.2">
+        <h3 id="name-extension-blocks">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-extension-blocks" class="section-name selfRef">Extension Blocks</a>
+        </h3>
+<p id="section-5.2-1">The encapsulating bundle carries only extension blocks pertaining to its own conveyance, inserted according to the policy of the encapsulating node and processed on the encapsulating path exactly as for any other bundle. In particular:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.2-2.1">
+            <p id="section-5.2-2.1.1">A Hop Count block (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.4.3" class="relref">Section 4.4.3</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>), if present, is new: its count starts at zero at the encapsulating node. The hop count of the encapsulated bundle, if any, does not advance while the bundle is encapsulated — the entire tunnel transit appears to the encapsulated bundle as a single hop. This is both a feature (tunnel transparency) and a hazard; see the loop considerations in <a href="#deployment" class="auto internal xref">Section 6</a>.<a href="#section-5.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.2-2.2">
+            <p id="section-5.2-2.2.1">A Bundle Age block (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.4.2" class="relref">Section 4.4.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>), if present, reflects the age of the encapsulating bundle only.<a href="#section-5.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.2-2.3">
+            <p id="section-5.2-2.3.1">A Previous Node block (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.4.1" class="relref">Section 4.4.1</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>) is inserted and replaced hop by hop on the encapsulating path in the normal manner, identifying nodes of the tunnel path, not of the encapsulated bundle's path.<a href="#section-5.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.2-3">Note that, symmetrically, the extension blocks of the encapsulated bundle are not processed while it is encapsulated. In particular, the Bundle Age block of an encapsulated bundle is not updated during tunnel transit, so the age of an encapsulated bundle originated by a node without an accurate clock is under-counted by the tunnel transit time. This is an unavoidable consequence of carrying the encapsulated bundle opaquely; the lifetime rule of <a href="#primary-block" class="auto internal xref">Section 5.1</a> bounds the error to at most the remaining lifetime of the encapsulated bundle at encapsulation. The decapsulating node cannot correct the encapsulated bundle's Bundle Age block: doing so would modify the encapsulated bundle, violating the opacity of the tunnel and invalidating any integrity protection covering it.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.2-4">The state in which the encapsulated bundle's blocks are frozen is the state in which the encapsulating node forwards it (<a href="#transmission" class="auto internal xref">Section 4.1</a>). A Previous Node block in a decapsulated bundle consequently identifies the encapsulating node: the single hop that the tunnel presents, consistent with <a href="#diagnostics" class="auto internal xref">Section 6.1</a>. The decapsulating node takes this block as it finds it — it cannot verify it in general (the encapsulating node may hold several node IDs, the encapsulated data may not be a BPv7 bundle, and the block is optional) and correcting it would modify the encapsulated bundle — but a stale or absent Previous Node block is consulted only during local processing at the decapsulating node and is replaced in the normal manner upon onward forwarding.<a href="#section-5.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="payload-format">
+<section id="section-5.3">
+        <h3 id="name-payload">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-payload" class="section-name selfRef">Payload</a>
+        </h3>
+<p id="section-5.3-1">The payload of an encapsulating bundle <span class="bcp14">SHALL</span> be represented as a CBOR array, encoded with definite length. The array size discriminates the payload form:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.3-2.1">
+            <p id="section-5.3-2.1.1">An array of size 1 is a whole-bundle payload. Its sole element is the encapsulated-data field.<a href="#section-5.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.2">
+            <p id="section-5.3-2.2.1">An array of size 4 is a segment payload: the three segmentation fields, in the order defined below, followed by the encapsulated-data field.<a href="#section-5.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.3">
+            <p id="section-5.3-2.3.1">All other array sizes are reserved for future use; a payload with a reserved array size <span class="bcp14">MUST</span> be discarded by a receiving decapsulation element.<a href="#section-5.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.3-3">The fields are defined as follows:<a href="#section-5.3-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.3-4">
+          <dt id="section-5.3-4.1">transfer-id:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.3-4.2">
+            <p id="section-5.3-4.2.1">An unsigned integer identifying the transfer to which this segment belongs, scoped to the pair (encapsulating node, decapsulation endpoint). See <a href="#transfer-ids" class="auto internal xref">Section 4.3</a>.<a href="#section-5.3-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.3-4.3">total-length:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.3-4.4">
+            <p id="section-5.3-4.4.1">An unsigned integer giving the total length in octets of the encapsulated bundle.<a href="#section-5.3-4.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.3-4.5">segment-offset:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.3-4.6">
+            <p id="section-5.3-4.6.1">An unsigned integer giving the offset in octets, from zero, of the first octet of encapsulated-data within the encapsulated bundle.<a href="#section-5.3-4.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.3-4.7">encapsulated-data:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.3-4.8">
+            <p id="section-5.3-4.8.1">A byte string, encoded with definite length. In a whole-bundle payload, its content is the entire encapsulated bundle; in a segment payload, its content is a contiguous sequence of octets of the encapsulated bundle.<a href="#section-5.3-4.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-5.3-5">An informative CDDL expression of this structure is provided in <a href="#cddl" class="auto internal xref">Appendix A</a>.<a href="#section-5.3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="deployment">
+<section id="section-6">
+      <h2 id="name-deployment-considerations">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-deployment-considerations" class="section-name selfRef">Deployment Considerations</a>
+      </h2>
+<p id="section-6-1">The following characteristics of BIBE are to be considered before deployment:<a href="#section-6-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6-2">
+<li id="section-6-2.1">
+          <p id="section-6-2.1.1">It is unreliable: there is no BIBE-layer acknowledgement or retransmission. Where reliability is required it is expected to be provided by the convergence layers carrying the encapsulating bundles, by replication/repetition strategies at lower layers (see, e.g., <span>[<a href="#BTPU" class="cite xref">BTPU</a>]</span>), by custody or other acknowledgement signalling operating at a higher layer over the encapsulated bundles, or end to end by the communicating applications.<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-6-2.2">
+          <p id="section-6-2.2.1">It fails silently: no condition at or beyond the decapsulation endpoint is signalled to the encapsulating node. A segment payload discarded because the decapsulation element does not support reassembly (<a href="#reception" class="auto internal xref">Section 4.4</a>), a transfer that expires or is discarded incomplete (<a href="#resources" class="auto internal xref">Section 4.6</a>), and a payload discarded for a reserved array size (<a href="#payload-format" class="auto internal xref">Section 5.3</a>) are, to the encapsulating node, indistinguishable from loss of the encapsulating bundles in transit — so a misconfigured tunnel, such as a segmentation threshold set toward a peer that does not support reassembly, presents as persistent silent loss. This document deliberately defines no signal reporting the disposition of a payload after delivery; the visibility available from existing status report machinery is set out in <a href="#diagnostics" class="auto internal xref">Section 6.1</a>, and verifying that a tunnel is correctly configured is an operational matter for its administrators. <span class="cref" id="nosignal">A post-delivery disposition signal would make every decapsulation element a bundle source, require an enumeration of failure reasons, and amount to the acknowledgement layer this protocol does not have; and the conditions it could report are configuration errors of a bilaterally configured tunnel, properly detected by its operators rather than corrected by the protocol.</span><a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-6-2.3">
+          <p id="section-6-2.3.1">Encapsulating and decapsulating nodes require compatible configuration (the decapsulation endpoint, the segmentation threshold, and whether reassembly is supported), established in advance.<a href="#section-6-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-6-2.4">
+          <p id="section-6-2.4.1">An encapsulating bundle whose destination endpoint has no registered decapsulation element at the destination node will be delivered to whatever application is registered there, or abandoned; nothing distinguishes an encapsulating bundle from any other bundle in transit.<a href="#section-6-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-6-2.5">
+          <p id="section-6-2.5.1">As with IP tunnels, recursive encapsulation loops are possible: if the route toward a decapsulation endpoint itself resolves to BIBE encapsulation (at this node or a mutually recursive one), each encapsulation produces a new bundle that is encapsulated again, without limit. Unlike IP, a bundle has no hop-limit field that survives encapsulation, so the loop is not self-terminating within bundle lifetime. An implementation <span class="bcp14">MUST</span> protect against this, for example by refusing to encapsulate a bundle it recognizes as one of its own encapsulating bundles, by bounding nesting depth (compare the tunnel encapsulation limit of <span>[<a href="#TUNLIMIT" class="cite xref">TUNLIMIT</a>]</span>), or by configuration validation ensuring the route to a decapsulation endpoint does not traverse the tunnel it serves.<a href="#section-6-2.5.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<div id="diagnostics">
+<section id="section-6.1">
+        <h3 id="name-diagnostics">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-diagnostics" class="section-name selfRef">Diagnostics</a>
+        </h3>
+<p id="section-6.1-1">BIBE requires no diagnostic machinery of its own: because encapsulating bundles are ordinary bundles and decapsulation ends in ordinary reception (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.6" class="relref">Section 5.6</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>), the bundle status report mechanism of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-6.1" class="relref">Section 6.1</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span> already observes every stage of the encapsulation chain. Status reports are requested per bundle and honoured subject to node policy; they are a diagnostic instrument, and the report flags of encapsulating bundles <span class="bcp14">SHOULD NOT</span> be set in normal operation — a stream of status reports directed at the encapsulating node both amplifies traffic and identifies tunnel traffic to on-path observers (<a href="#security-considerations" class="auto internal xref">Section 7</a>).<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">When enabled for diagnosis, the observation points are:<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.1-3.1">
+            <p id="section-6.1-3.1.1">Tunnel ingress: encapsulation is a forwarding operation (<a href="#model" class="auto internal xref">Section 3</a>), so an encapsulated bundle that requests forwarding reports causes a "bundle forwarded" status report from the encapsulating node in the normal way.<a href="#section-6.1-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-3.2">
+            <p id="section-6.1-3.2.1">Tunnel transit: the encapsulating node sets the report flags and report-to EID of the encapsulating bundles it sources (<a href="#primary-block" class="auto internal xref">Section 5.1</a>). Reception and forwarding reports trace the tunnel path; a deletion report identifies where and why an encapsulating bundle was lost, using the existing reason codes (e.g. "Lifetime expired", "Depleted storage", "No known route to destination from here", "No timely contact with next node on route", "Block unintelligible", "Hop limit exceeded" — the latter being the signature of the encapsulation loops cautioned against in <a href="#deployment" class="auto internal xref">Section 6</a>).<a href="#section-6.1-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-3.3">
+            <p id="section-6.1-3.3.1">Transfer completion: delivery reports requested on the encapsulating bundles of a transfer confirm, chunk by chunk, that its payloads reached the decapsulation element; a delivery report still absent at the transfer's expiry (<a href="#primary-block" class="auto internal xref">Section 5.1</a>) identifies the lost segment(s) to the encapsulating node without any signal from the decapsulating peer.<a href="#section-6.1-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-3.4">
+            <p id="section-6.1-3.4.1">Tunnel egress: the reassembled or whole encapsulated bundle is presented to the BPA per <span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.6" class="relref">Section 5.6</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, so its own reception, deletion, and onward forwarding reports resume in the normal way; to the encapsulated bundle's reporting, the entire tunnel transit appears as a single hop.<a href="#section-6.1-3.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-6.1-4">These observation points compose: delivery reports confirming that every encapsulating bundle of a transfer reached the decapsulation endpoint, while the encapsulated bundle's own reception report from the decapsulating node never arrives, localize the failure to the decapsulation element itself — a configuration mismatch (<a href="#deployment" class="auto internal xref">Section 6</a>) rather than transit loss — which is precisely the distinction an administrator needs when a tunnel fails silently.<a href="#section-6.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.1-5">The dispositions internal to the decapsulation element (<a href="#reception" class="auto internal xref">Section 4.4</a>, <a href="#reassembly" class="auto internal xref">Section 4.5</a>, <a href="#resources" class="auto internal xref">Section 4.6</a>) occur after delivery of the encapsulating bundle and concern data that is not (or not yet) a bundle; they are not expressible as status reports about either bundle, and <span class="bcp14">SHOULD</span> instead be surfaced by local means (logs, counters) at the decapsulating node.<a href="#section-6.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-7">
+      <h2 id="name-security-considerations">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-7-1">Security considerations largely follow those of BPv7 <span>[<a href="#RFC9171" class="cite xref">RFC9171</a>]</span> and BPSec <span>[<a href="#RFC9172" class="cite xref">RFC9172</a>]</span>. In addition, because BIBE is a tunneling protocol, the security concerns cataloged for IP tunneling in <span>[<a href="#TUNSEC" class="cite xref">TUNSEC</a>]</span> apply, translated to the BP layer, and are addressed in the following subsections.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<div id="composition-with-bpsec">
+<section id="section-7.1">
+        <h3 id="name-composition-with-bpsec">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-composition-with-bpsec" class="section-name selfRef">Composition with BPSec</a>
+        </h3>
+<p id="section-7.1-1">BIBE composes constructively with BPSec: a BCB on the payload of the encapsulating bundle encrypts the entire encapsulated bundle, including its primary block, concealing the encapsulated source and destination from observers on the encapsulating path.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="circumvention-of-policy-enforcement">
+<section id="section-7.2">
+        <h3 id="name-circumvention-of-policy-enf">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-circumvention-of-policy-enf" class="section-name selfRef">Circumvention of Policy Enforcement</a>
+        </h3>
+<p id="section-7.2-1">As <span>[<a href="#TUNSEC" class="cite xref">TUNSEC</a>]</span> observes for IP, tunneled traffic is opaque to inspection and filtering points along the tunnel path: a node on the encapsulating path that would, by policy, have refused to forward or store the encapsulated bundle (by destination, source, block content, size, or any other criterion) cannot apply that policy, particularly when the encapsulating payload is encrypted. BIBE therefore permits bundles to cross policy boundaries that they could not cross natively — which is precisely its cross-domain use case when authorized, and a policy-evasion channel when not.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.2-2">Consequently the decapsulating node is a policy enforcement point: a decapsulated bundle <span class="bcp14">MUST</span> be subjected to the node's normal inbound bundle admission policy, exactly as if it had arrived via any convergence layer, before it is forwarded or delivered. A node <span class="bcp14">SHOULD NOT</span> afford decapsulated bundles any trust derived from the encapsulating bundle's security verification unless policy explicitly says so. Network operators <span class="bcp14">SHOULD</span> restrict, by policy, where decapsulation elements may be registered and from which peers each will accept encapsulating bundles, just as prudent IP networks control where tunnels may terminate.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="spoofing-of-the-encapsulated-bundle">
+<section id="section-7.3">
+        <h3 id="name-spoofing-of-the-encapsulate">
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-spoofing-of-the-encapsulate" class="section-name selfRef">Spoofing of the Encapsulated Bundle</a>
+        </h3>
+<p id="section-7.3-1">Nothing in this protocol authenticates the contents of an encapsulated bundle: the source of the encapsulated bundle is whatever its primary block claims, and an authorized (or compromised) encapsulating peer can inject bundles claiming any source. Authentication of the encapsulating bundle (e.g. a Block Integrity Block (BIB) covering the payload) authenticates only the tunnel peer, not the encapsulated bundle's provenance; end-to-end assurance of the encapsulated bundle requires BPSec applied to the encapsulated bundle itself.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="resource-exhaustion">
+<section id="section-7.4">
+        <h3 id="name-resource-exhaustion">
+<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-resource-exhaustion" class="section-name selfRef">Resource Exhaustion</a>
+        </h3>
+<p id="section-7.4-1">A decapsulating node is exposed to resource-exhaustion attack by an adversary transmitting incomplete transfers, or segment payloads with large total-length values. Although <a href="#resources" class="auto internal xref">Section 4.6</a> bounds the retention of reassembly state by the expiry of the encapsulating bundles, that expiry is claimed by the sender: an adversary can assign its encapsulating bundles distant expiry times. Because decapsulation endpoints are established by administrative policy rather than at a well-known service identifier (<a href="#model" class="auto internal xref">Section 3</a>), an adversary has no predictable target for such traffic; operators <span class="bcp14">SHOULD</span> treat decapsulation endpoint IDs as configuration shared only with authorized tunnel peers. The expiry deadline and local resource management policies of <a href="#resources" class="auto internal xref">Section 4.6</a> mitigate this; deployments <span class="bcp14">SHOULD</span> additionally authenticate encapsulating bundles (e.g. with a BIB covering the payload) so that payloads from unauthorized sources can be discarded before reassembly state is committed. Authentication narrows the exposure to authorized peers but does not eliminate it: a compromised or misbehaving authorized peer can still commit reassembly storage up to whatever bound local policy enforces, and that policy is therefore the mitigation of last resort.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
+<p id="section-7.4-2">Recursive encapsulation is a related amplification hazard; see <a href="#deployment" class="auto internal xref">Section 6</a> for the required loop protections.<a href="#section-7.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-8">
+      <h2 id="name-iana-considerations">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-8-1">This document has no IANA actions: decapsulation endpoints are established by administrative policy (<a href="#model" class="auto internal xref">Section 3</a>), so no well-known service identifier is defined, and the payload of an encapsulating bundle is not an administrative record, so no administrative record type is allocated.<a href="#section-8-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-9">
+      <h2 id="name-references">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-9.1">
+        <h3 id="name-normative-references">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9171">[RFC9171]</dt>
+      <dd>
+<span class="refAuthor">Burleigh, S.</span>, <span class="refAuthor">Fall, K.</span>, and <span class="refAuthor">E. Birrane, III</span>, <span class="refTitle">"Bundle Protocol Version 7"</span>, <span class="seriesInfo">RFC 9171</span>, <span class="seriesInfo">DOI 10.17487/RFC9171</span>, <time datetime="2022-01" class="refDate">January 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9171">https://www.rfc-editor.org/rfc/rfc9171</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-9.2">
+        <h3 id="name-informative-references">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="BTPU">[BTPU]</dt>
+        <dd>
+<span class="refAuthor">Taylor, R.</span>, <span class="refTitle">"Bundle Transfer Protocol - Unidirectional"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-dtn-btpu-02</span>, <time datetime="2026-02-17" class="refDate">17 February 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-dtn-btpu-02">https://datatracker.ietf.org/doc/html/draft-ietf-dtn-btpu-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="GRE">[GRE]</dt>
+        <dd>
+<span class="refAuthor">Farinacci, D.</span>, <span class="refAuthor">Li, T.</span>, <span class="refAuthor">Hanks, S.</span>, <span class="refAuthor">Meyer, D.</span>, and <span class="refAuthor">P. Traina</span>, <span class="refTitle">"Generic Routing Encapsulation (GRE)"</span>, <span class="seriesInfo">RFC 2784</span>, <span class="seriesInfo">DOI 10.17487/RFC2784</span>, <time datetime="2000-03" class="refDate">March 2000</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2784">https://www.rfc-editor.org/rfc/rfc2784</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="GREKEY">[GREKEY]</dt>
+        <dd>
+<span class="refAuthor">Dommety, G.</span>, <span class="refTitle">"Key and Sequence Number Extensions to GRE"</span>, <span class="seriesInfo">RFC 2890</span>, <span class="seriesInfo">DOI 10.17487/RFC2890</span>, <time datetime="2000-09" class="refDate">September 2000</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2890">https://www.rfc-editor.org/rfc/rfc2890</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="IPIP">[IPIP]</dt>
+        <dd>
+<span class="refAuthor">Perkins, C.</span>, <span class="refTitle">"IP Encapsulation within IP"</span>, <span class="seriesInfo">RFC 2003</span>, <span class="seriesInfo">DOI 10.17487/RFC2003</span>, <time datetime="1996-10" class="refDate">October 1996</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2003">https://www.rfc-editor.org/rfc/rfc2003</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5050">[RFC5050]</dt>
+        <dd>
+<span class="refAuthor">Scott, K.</span> and <span class="refAuthor">S. Burleigh</span>, <span class="refTitle">"Bundle Protocol Specification"</span>, <span class="seriesInfo">RFC 5050</span>, <span class="seriesInfo">DOI 10.17487/RFC5050</span>, <time datetime="2007-11" class="refDate">November 2007</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5050">https://www.rfc-editor.org/rfc/rfc5050</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8610">[RFC8610]</dt>
+        <dd>
+<span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Vigano, C.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"Concise Data Definition Language (CDDL): A Notational Convention to Express Concise Binary Object Representation (CBOR) and JSON Data Structures"</span>, <span class="seriesInfo">RFC 8610</span>, <span class="seriesInfo">DOI 10.17487/RFC8610</span>, <time datetime="2019-06" class="refDate">June 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8610">https://www.rfc-editor.org/rfc/rfc8610</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9172">[RFC9172]</dt>
+        <dd>
+<span class="refAuthor">Birrane, III, E.</span> and <span class="refAuthor">K. McKeever</span>, <span class="refTitle">"Bundle Protocol Security (BPSec)"</span>, <span class="seriesInfo">RFC 9172</span>, <span class="seriesInfo">DOI 10.17487/RFC9172</span>, <time datetime="2022-01" class="refDate">January 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9172">https://www.rfc-editor.org/rfc/rfc9172</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9758">[RFC9758]</dt>
+        <dd>
+<span class="refAuthor">Taylor, R.</span> and <span class="refAuthor">E. Birrane III</span>, <span class="refTitle">"Updates to the 'ipn' URI Scheme"</span>, <span class="seriesInfo">RFC 9758</span>, <span class="seriesInfo">DOI 10.17487/RFC9758</span>, <time datetime="2025-05" class="refDate">May 2025</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9758">https://www.rfc-editor.org/rfc/rfc9758</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TUNLIMIT">[TUNLIMIT]</dt>
+        <dd>
+<span class="refAuthor">Conta, A.</span> and <span class="refAuthor">S. Deering</span>, <span class="refTitle">"Generic Packet Tunneling in IPv6 Specification"</span>, <span class="seriesInfo">RFC 2473</span>, <span class="seriesInfo">DOI 10.17487/RFC2473</span>, <time datetime="1998-12" class="refDate">December 1998</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2473">https://www.rfc-editor.org/rfc/rfc2473</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TUNMTU">[TUNMTU]</dt>
+        <dd>
+<span class="refAuthor">Savola, P.</span>, <span class="refTitle">"MTU and Fragmentation Issues with In-the-Network Tunneling"</span>, <span class="seriesInfo">RFC 4459</span>, <span class="seriesInfo">DOI 10.17487/RFC4459</span>, <time datetime="2006-04" class="refDate">April 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4459">https://www.rfc-editor.org/rfc/rfc4459</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TUNSEC">[TUNSEC]</dt>
+      <dd>
+<span class="refAuthor">Krishnan, S.</span>, <span class="refAuthor">Thaler, D.</span>, and <span class="refAuthor">J. Hoagland</span>, <span class="refTitle">"Security Concerns with IP Tunneling"</span>, <span class="seriesInfo">RFC 6169</span>, <span class="seriesInfo">DOI 10.17487/RFC6169</span>, <time datetime="2011-04" class="refDate">April 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6169">https://www.rfc-editor.org/rfc/rfc6169</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="cddl">
+<section id="appendix-A">
+      <h2 id="name-cddl-expression">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-cddl-expression" class="section-name selfRef">CDDL Expression</a>
+      </h2>
+<p id="appendix-A-1">For informational purposes, <a href="#fig-cddl" class="auto internal xref">Figure 2</a> restates the structure defined in <a href="#payload-format" class="auto internal xref">Section 5.3</a> in CDDL <span>[<a href="#RFC8610" class="cite xref">RFC8610</a>]</span>, extending the <code>$payload-block-data</code> socket defined in Appendix B of <span>[<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>: the payload block content is an encoded CBOR array in which the three segmentation fields are optional as a group — either all present (a segment payload) or all absent (a whole-bundle payload) — and the final field is always a byte string. If this CDDL and the text definitions of <a href="#payload-format" class="auto internal xref">Section 5.3</a> disagree, the text governs.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<span id="name-cddl-definition-of-the-enca"></span><div id="fig-cddl">
+<figure id="figure-2">
+        <div class="lang-cddl sourcecode" id="appendix-A-2.1">
+<pre>
+$payload-block-data /= bstr .cbor encapsulation-payload
+
+encapsulation-payload = [
+  ? (
+    transfer-id: uint,
+    total-length: uint,
+    segment-offset: uint
+  ),
+  encapsulated-data: bstr
+]
+</pre>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-cddl-definition-of-the-enca" class="selfRef">CDDL definition of the encapsulating bundle payload</a>
+        </figcaption></figure>
+</div>
+<p id="appendix-A-3">Note that encoding constraints (definite-length encoding) are matters for the text definitions of <a href="#payload-format" class="auto internal xref">Section 5.3</a>; CDDL does not express encoding options. Note also that encapsulated-data is deliberately a plain bstr rather than <code>bstr .cbor bundle</code>: its content may be a BPv6 bundle (which is not CBOR) in the version-encapsulation use case, and in a segment payload it is an arbitrary slice of octets that need not be well-formed CBOR at all.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-B">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-B-1">This document is directly derived from draft-ietf-dtn-bibect, authored by Scott Burleigh, Alberto Montilla, Joshua Deaton, and Carlo Caini; its architecture and concepts originate with them. The central insight — that a BP network can itself serve as the "link layer" beneath a further layer of bundle protocol — is Scott Burleigh's, and the encapsulation-only scope of this document is a return to that of his original 2013 formulation, draft-irtf-burleigh-bibe.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">The segmentation mechanism was designed within the CCSDS Bundle-in-Bundle Encapsulation effort of the Space Internetworking Services (SIS-DTN) working group, which identified bundle segmentation, rather than BPv7 fragmentation, as the appropriate tool for carrying large bundles over size-limited paths, and defined the representation this document adopts. Joshua Deaton contributed to both the IETF and CCSDS strands of that work, which was demonstrated in a prototype implementation within DTNME at NASA. The segmentation model is aligned with the transfer/segment design of <span>[<a href="#BTPU" class="cite xref">BTPU</a>]</span>.<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<p id="appendix-B-3">Brian Sipos contributed the CDDL formulation in <a href="#cddl" class="auto internal xref">Appendix A</a>, and the discipline of keeping normative text definitions strictly separate from CDDL.<a href="#appendix-B-3" class="pilcrow">¶</a></p>
+<p id="appendix-B-4">The original bundle-in-bundle encapsulation concept derives from draft-irtf-dtnrg-bundle-encapsulation (2009) by Susan Symington, Bob Durst, and Keith Scott of The MITRE Corporation, whose influence is gratefully acknowledged.<a href="#appendix-B-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="contributors">
+<section id="appendix-C">
+      <h2 id="name-contributors">
+<a href="#name-contributors" class="section-name selfRef">Contributors</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Scott Burleigh</span></div>
+<div dir="auto" class="left"><span class="org">IPNGROUP</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:sburleig.sb@gmail.com" class="email">sburleig.sb@gmail.com</a>
+</div>
+</address>
+<p id="appendix-C-1">Author of the successive BIBE Internet-Drafts, from draft-irtf-burleigh-bibe (2013) through draft-ietf-dtn-bibect, from which this document is directly derived; the BIBE architecture is his.<a href="#appendix-C-1" class="pilcrow">¶</a></p>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Alberto Montilla</span></div>
+<div dir="auto" class="left"><span class="org">Spatiam Corporation</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:a.montilla@spatiam.com" class="email">a.montilla@spatiam.com</a>
+</div>
+</address>
+<p id="appendix-C-2">Co-author of draft-ietf-dtn-bibect.<a href="#appendix-C-2" class="pilcrow">¶</a></p>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Joshua Deaton</span></div>
+<div dir="auto" class="left"><span class="org">SAIC</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:joshua.e.deaton@nasa.gov" class="email">joshua.e.deaton@nasa.gov</a>
+</div>
+</address>
+<p id="appendix-C-3">Co-author of draft-ietf-dtn-bibect, and contributor to the CCSDS Orange Book segmentation work on which the segmentation mechanism of this document builds.<a href="#appendix-C-3" class="pilcrow">¶</a></p>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Carlo Caini</span></div>
+<div dir="auto" class="left"><span class="org">University of Bologna</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:carlo.caini@unibo.it" class="email">carlo.caini@unibo.it</a>
+</div>
+</address>
+<p id="appendix-C-4">Co-author of draft-ietf-dtn-bibect.<a href="#appendix-C-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-D">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Rick Taylor (<span class="role">editor</span>)</span></div>
+<div dir="auto" class="left"><span class="org">Aalyria Technologies</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:rtaylor@aalyria.com" class="email">rtaylor@aalyria.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
