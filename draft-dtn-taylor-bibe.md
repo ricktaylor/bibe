@@ -62,10 +62,10 @@ contributor:
   contribution: Co-author of draft-ietf-dtn-bibect.
 
 venue:
-#  group: Delay/Disruption Tolerant Networking
-#  type: Working Group
-#  mail: dtn@ietf.org
-#  arch: https://mailarchive.ietf.org/arch/browse/dtn/
+# group: Delay/Disruption Tolerant Networking
+# type: Working Group
+# mail: dtn@ietf.org
+# arch: https://mailarchive.ietf.org/arch/browse/dtn/
 
 normative:
 
@@ -152,7 +152,7 @@ BIBE is specified as observable behavior, not as a component architecture, in te
 
 {{fig-model}} illustrates the asymmetry of the model: the encapsulation function operates on the forwarding path of the encapsulating node, while the decapsulation element is an element of the application agent of the decapsulating node; the encapsulated bundle experiences the entire tunnel as a single hop.
 
-~~~
+~~~aasvg
       Encapsulating Node                    Decapsulating Node
 
  bundle B ...(to bundle B, the tunnel is one hop)... bundle B
