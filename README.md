@@ -4,10 +4,10 @@
 
 This is the working area for the individual Internet-Draft, "Bundle-in-Bundle Encapsulation".
 
-* [Editor's Copy](https://ricktaylor.github.io/bibe/#go.draft-dtn-taylor-bibe.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-dtn-taylor-bibe)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-dtn-taylor-bibe)
-* [Compare Editor's Copy to Individual Draft](https://ricktaylor.github.io/bibe/#go.draft-dtn-taylor-bibe.diff)
+* [Editor's Copy](https://ricktaylor.github.io/bibe/#go.draft-taylor-dtn-bibe.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-taylor-dtn-bibe)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-taylor-dtn-bibe)
+* [Compare Editor's Copy to Individual Draft](https://ricktaylor.github.io/bibe/#go.draft-taylor-dtn-bibe.diff)
 
 
 ## Contributing

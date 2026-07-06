@@ -4,7 +4,7 @@ title: Bundle-in-Bundle Encapsulation
 abbrev: BIBE
 category: std
 
-docname: draft-dtn-taylor-bibe-latest
+docname: draft-taylor-dtn-bibe-latest
 submissiontype: IETF
 number:
 date:
@@ -62,10 +62,12 @@ contributor:
   contribution: Co-author of draft-ietf-dtn-bibect.
 
 venue:
-# group: Delay/Disruption Tolerant Networking
-# type: Working Group
-# mail: dtn@ietf.org
-# arch: https://mailarchive.ietf.org/arch/browse/dtn/
+  group: Delay/Disruption Tolerant Networking
+  type: Working Group
+  mail: dtn@ietf.org
+  arch: https://mailarchive.ietf.org/arch/browse/dtn/
+  github: ricktaylor/bibe
+  latest: https://ricktaylor.github.io/bibe/draft-taylor-dtn-bibe.html
 
 normative:
 
