@@ -25,7 +25,7 @@ author:
 - fullname: Rick Taylor
   role: editor
   organization: Aalyria Technologies
-  email: <rtaylor@aalyria.com>
+  email: rtaylor@aalyria.com
 
 # EDNOTE: This document replaces the expired draft-ietf-dtn-bibect-05 under a
 
@@ -43,29 +43,29 @@ contributor:
 
 - fullname: Scott Burleigh
   organization: IPNGROUP
-  email: <sburleig.sb@gmail.com>
+  email: sburleig.sb@gmail.com
   contribution: Author of the successive BIBE Internet-Drafts, from draft-irtf-burleigh-bibe (2013) through draft-ietf-dtn-bibect, from which this document is directly derived; the BIBE architecture is his.
 
 - fullname: Alberto Montilla
   organization: Spatiam Corporation
-  email: <a.montilla@spatiam.com>
+  email: a.montilla@spatiam.com
   contribution: Co-author of draft-ietf-dtn-bibect.
 
 - fullname: Joshua Deaton
   organization: SAIC
-  email: <joshua.e.deaton@nasa.gov>
+  email: joshua.e.deaton@nasa.gov
   contribution: Co-author of draft-ietf-dtn-bibect, and contributor to the CCSDS Orange Book segmentation work on which the segmentation mechanism of this document builds.
 
 - fullname: Carlo Caini
   organization: University of Bologna
-  email: <carlo.caini@unibo.it>
+  email: carlo.caini@unibo.it
   contribution: Co-author of draft-ietf-dtn-bibect.
 
 venue:
   group: Delay/Disruption Tolerant Networking
   type: Working Group
-  mail: <dtn@ietf.org>
-  arch: <https://mailarchive.ietf.org/arch/browse/dtn/>
+  mail: dtn@ietf.org
+  arch: https://mailarchive.ietf.org/arch/browse/dtn/
 
 normative:
 

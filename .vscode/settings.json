@@ -1,0 +1,7 @@
+{
+    "makefile.configureOnOpen": false,
+    "markdownlint.config": {
+        "MD022": false,
+        "MD034": false,
+    }
+}
