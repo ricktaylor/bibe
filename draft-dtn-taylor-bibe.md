@@ -10,8 +10,8 @@ number:
 date:
 consensus: true
 v: 3
-area: INT
-workgroup: Delay/Disruption Tolerant Networking
+# area: INT
+# workgroup: Delay/Disruption Tolerant Networking
 
 keyword:
 
@@ -62,10 +62,10 @@ contributor:
   contribution: Co-author of draft-ietf-dtn-bibect.
 
 venue:
-  group: Delay/Disruption Tolerant Networking
-  type: Working Group
-  mail: dtn@ietf.org
-  arch: https://mailarchive.ietf.org/arch/browse/dtn/
+#  group: Delay/Disruption Tolerant Networking
+#  type: Working Group
+#  mail: dtn@ietf.org
+#  arch: https://mailarchive.ietf.org/arch/browse/dtn/
 
 normative:
 
