@@ -173,7 +173,6 @@ BIBE is specified as observable behavior, not as a component architecture, in te
    BPA --CLA--> node --CLA--> ... --CLA--> BPA ----------+
             ordinary BPv7 forwarding of bundle E
 ~~~
-
 {: #fig-model title="Functional model: encapsulation of bundle B in bundle E"}
 
 How a BPA selects the encapsulation function is an implementation matter: it might be realized as a convergence-layer adapter selected by a forwarding table entry, applied as a filter or transform on the egress forwarding path, or integrated in some other way. Nothing in this document depends on the choice.
@@ -396,13 +395,11 @@ encapsulation-payload = [
   encapsulated-data: bstr
 ]
 ~~~
-
 {: #fig-cddl title="CDDL definition of the encapsulating bundle payload" }
 
 Note that encoding constraints (definite-length encoding) are matters for the text definitions of {{payload-format}}; CDDL does not express encoding options. Note also that encapsulated-data is deliberately a plain bstr rather than `bstr .cbor bundle`: its content may be a BPv6 bundle (which is not CBOR) in the version-encapsulation use case, and in a segment payload it is an arbitrary slice of octets that need not be well-formed CBOR at all.
 
 # Acknowledgments
-
 {:numbered="false"}
 
 This document is directly derived from draft-ietf-dtn-bibect, authored by Scott Burleigh, Alberto Montilla, Joshua Deaton, and Carlo Caini; its architecture and concepts originate with them. The central insight — that a BP network can itself serve as the "link layer" beneath a further layer of bundle protocol — is Scott Burleigh's, and the encapsulation-only scope of this document is a return to that of his original 2013 formulation, draft-irtf-burleigh-bibe.
