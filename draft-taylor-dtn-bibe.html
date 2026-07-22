@@ -24,7 +24,7 @@
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.10.0
+    platformdirs 4.10.1
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
@@ -1051,7 +1051,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Taylor</td>
-<td class="center">Expires 7 January 2027</td>
+<td class="center">Expires 23 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1064,12 +1064,12 @@ svg {
 <dd class="internet-draft">draft-taylor-dtn-bibe-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-06" class="published">6 July 2026</time>
+<time datetime="2026-07-22" class="published">22 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-07">7 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-01-23">23 January 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1120,7 +1120,7 @@ svg {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 7 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 23 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1532,7 +1532,8 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
             <p id="section-4.2-4.3.1">For each segment the encapsulation function <span class="bcp14">SHALL</span> generate a segment payload with the common transfer-id, the total length of the bundle, the segment's offset, and the segment's octets, and <span class="bcp14">SHALL</span> request transmission of an encapsulating bundle, destined for the indicated endpoint, carrying that payload.<a href="#section-4.2-4.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.2-5">Segmentation requires that every segment of a transfer be delivered to the same decapsulation element: reassembly state is held by the element that takes delivery (<a href="#reassembly" class="auto internal xref">Section 4.5</a>), and a transfer whose segments are divided among different elements can never complete. When a decapsulation endpoint has more than one member node, the Bundle Protocol does not specify which member takes delivery of any particular bundle, so distinct encapsulating bundles of one transfer may be delivered to different members; each member then accumulates a disjoint, incomplete set of segments, and the transfer fails silently at its expiry. Accordingly, an encapsulating node <span class="bcp14">MUST NOT</span> segment a bundle toward a decapsulation endpoint unless that endpoint is known to be a singleton endpoint — by the rules of the EID's scheme (every 'ipn' scheme EID identifies a singleton endpoint, <span><a href="https://rfc-editor.org/rfc/rfc9758#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9758" class="cite xref">RFC9758</a>]</span>) or by configuration. Whole-bundle payloads are not subject to this constraint: any member taking delivery holds the entire encapsulated bundle, although delivery to more than one member duplicates the encapsulated bundle at each.<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+<p id="section-4.2-5">Requesting transmission of the first encapsulating bundle of a transfer commits the encapsulation function to the remainder: this protocol provides no abort or cancellation signal, so a transfer abandoned partway is indistinguishable, at the decapsulating node, from loss of the remaining encapsulating bundles in transit (<a href="#deployment" class="auto internal xref">Section 6</a>). An abandoned transfer occupies reassembly state at the decapsulation element until the transfer's expiry (<a href="#resources" class="auto internal xref">Section 4.6</a>), and its Transfer ID remains unavailable for reuse until that same time (<a href="#transfer-ids" class="auto internal xref">Section 4.3</a>).<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+<p id="section-4.2-6">Segmentation requires that every segment of a transfer be delivered to the same decapsulation element: reassembly state is held by the element that takes delivery (<a href="#reassembly" class="auto internal xref">Section 4.5</a>), and a transfer whose segments are divided among different elements can never complete. When a decapsulation endpoint has more than one member node, the Bundle Protocol does not specify which member takes delivery of any particular bundle, so distinct encapsulating bundles of one transfer may be delivered to different members; each member then accumulates a disjoint, incomplete set of segments, and the transfer fails silently at its expiry. Accordingly, an encapsulating node <span class="bcp14">MUST NOT</span> segment a bundle toward a decapsulation endpoint unless that endpoint is known to be a singleton endpoint — by the rules of the EID's scheme (every 'ipn' scheme EID identifies a singleton endpoint, <span><a href="https://rfc-editor.org/rfc/rfc9758#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9758" class="cite xref">RFC9758</a>]</span>) or by configuration. Whole-bundle payloads are not subject to this constraint: any member taking delivery holds the entire encapsulated bundle, although delivery to more than one member duplicates the encapsulated bundle at each.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="transfer-ids">
@@ -1540,8 +1541,8 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
         <h3 id="name-transfer-ids">
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-transfer-ids" class="section-name selfRef">Transfer IDs</a>
         </h3>
-<p id="section-4.3-1">Transfer IDs are unsigned integers that identify a transfer uniquely within the scope of the pair (encapsulating node, decapsulation endpoint). The scope is the encapsulating node itself, not any particular node ID it uses: however many node IDs a node holds (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.2.5.2" class="relref">Section 4.2.5.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>), it draws from a single Transfer ID space per decapsulation endpoint. A Transfer ID carries no ordering semantics: a decapsulation element <span class="bcp14">MUST NOT</span> infer transmission order, recency, or loss from the numeric values of Transfer IDs. There is no analog of the transfer window of <span>[<a href="#BTPU" class="cite xref">BTPU</a>]</span>: the temporal bound on a transfer is provided by bundle expiry, since the Bundle Protocol guarantees that no bundle is delivered after the end of its lifetime.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.3-2">An encapsulating node <span class="bcp14">MUST NOT</span> assign a Transfer ID that identifies another transfer, to the same decapsulation endpoint, any of whose encapsulating bundles have yet to expire. Because every encapsulating bundle of a transfer shares a single expiry time (<a href="#primary-block" class="auto internal xref">Section 5.1</a>), a Transfer ID becomes safely reusable at exactly the transfer's expiry time. Subject to this rule, the assignment strategy is an implementation matter: sequential assignment is one convenient choice, but random assignment is equally valid. To satisfy the rule across restarts of the encapsulating node, an implementation <span class="bcp14">SHOULD</span> either persist sufficient assignment state or select Transfer IDs after restart in a manner unlikely to collide with transfers still in flight (e.g. derived from a timestamp). <span class="cref" id="tidsize">CBOR uints are variable-length with no fixed wrap point, and the encoding stays small (1–5 octets) for realistic values, so there is no pressure to keep the identifier space compact.</span><a href="#section-4.3-2" class="pilcrow">¶</a></p>
+<p id="section-4.3-1">Transfer IDs are unsigned integers that identify a transfer uniquely within the scope of the pair (source node ID, destination EID) borne by the primary blocks of the transfer's encapsulating bundles (<a href="#primary-block" class="auto internal xref">Section 5.1</a>). Both elements of the scope are explicit in every encapsulating bundle and are compared literally, as EIDs, at the decapsulating node (<a href="#reassembly" class="auto internal xref">Section 4.5</a>), so neither peer requires any context beyond the bundle itself — in particular, no knowledge of which node IDs name the same node, of how many encapsulation functions operate at a node, or of how many endpoints a decapsulation element is registered in. A node holding several node IDs (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.2.5.2" class="relref">Section 4.2.5.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>) consequently has an independent Transfer ID space for each (source node ID, destination EID) pair it uses. A Transfer ID carries no ordering semantics: a decapsulation element <span class="bcp14">MUST NOT</span> infer transmission order, recency, or loss from the numeric values of Transfer IDs. There is no analog of the transfer window of <span>[<a href="#BTPU" class="cite xref">BTPU</a>]</span>: the temporal bound on a transfer is provided by bundle expiry, since the Bundle Protocol guarantees that no bundle is delivered after the end of its lifetime.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-2">An encapsulating node <span class="bcp14">MUST NOT</span> assign a Transfer ID that identifies another transfer with the same (source node ID, destination EID), any of whose encapsulating bundles have yet to expire. Because every encapsulating bundle of a transfer shares a single expiry time (<a href="#primary-block" class="auto internal xref">Section 5.1</a>), a Transfer ID becomes safely reusable at exactly the transfer's expiry time. Subject to this rule, the assignment strategy is an implementation matter, and uniqueness in any wider scope implies uniqueness in this one: a sequential counter per (source node ID, destination EID) pair, a counter per destination EID, and a single counter for the whole node are all valid disciplines, as is random assignment. To satisfy the rule across restarts of the encapsulating node, an implementation <span class="bcp14">SHOULD</span> either persist sufficient assignment state or select Transfer IDs after restart in a manner unlikely to collide with transfers still in flight (e.g. derived from a timestamp). <span class="cref" id="tidsize">CBOR uints are variable-length with no fixed wrap point, and the encoding stays small (1–5 octets) for realistic values, so there is no pressure to keep the identifier space compact.</span><a href="#section-4.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="reception">
@@ -1568,7 +1569,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
         <h3 id="name-reassembly">
 <a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-reassembly" class="section-name selfRef">Reassembly</a>
         </h3>
-<p id="section-4.5-1">A decapsulation element maintains a reassembly structure per active transfer, keyed by the pair (source node ID of the encapsulating bundle, transfer-id). Source node IDs are compared literally, as EIDs: a decapsulation element is not required to determine whether two distinct EIDs name the same node, and the source consistency rule of <a href="#primary-block" class="auto internal xref">Section 5.1</a> ensures that literal comparison suffices. The nature of the reassembly structure is an implementation matter.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<p id="section-4.5-1">A decapsulation element maintains a reassembly structure per active transfer, keyed by the triple (source node ID, destination EID, transfer-id) of the encapsulating bundle. Every component of the key is taken from the encapsulating bundle itself, so the key is unambiguous even when one decapsulation element is registered in several endpoints. Source node IDs and destination EIDs are compared literally, as EIDs: a decapsulation element is not required to determine whether two distinct EIDs name the same node or endpoint, and the consistency rules of <a href="#primary-block" class="auto internal xref">Section 5.1</a> ensure that literal comparison suffices. The nature of the reassembly structure is an implementation matter.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
 <p id="section-4.5-2">Upon processing a segment payload:<a href="#section-4.5-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.5-3.1">
@@ -1617,7 +1618,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <span class="break"></span><dl class="dlParallel" id="section-5.1-2">
           <dt id="section-5.1-2.1">Destination EID:</dt>
           <dd style="margin-left: 1.5em" id="section-5.1-2.2">
-            <p id="section-5.1-2.2.1"><span class="bcp14">SHALL</span> be the decapsulation endpoint ID toward which the encapsulated bundle is being forwarded.<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.2.1"><span class="bcp14">SHALL</span> be the decapsulation endpoint ID toward which the encapsulated bundle is being forwarded. When the payload is a segment payload, every encapsulating bundle of the transfer <span class="bcp14">SHALL</span> bear the same destination EID: the destination is one element of the scope that identifies the transfer (<a href="#transfer-ids" class="auto internal xref">Section 4.3</a>).<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-5.1-2.3">Source node ID:</dt>
@@ -1692,7 +1693,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <span class="break"></span><dl class="dlParallel" id="section-5.3-4">
           <dt id="section-5.3-4.1">transfer-id:</dt>
           <dd style="margin-left: 1.5em" id="section-5.3-4.2">
-            <p id="section-5.3-4.2.1">An unsigned integer identifying the transfer to which this segment belongs, scoped to the pair (encapsulating node, decapsulation endpoint). See <a href="#transfer-ids" class="auto internal xref">Section 4.3</a>.<a href="#section-5.3-4.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.3-4.2.1">An unsigned integer identifying the transfer to which this segment belongs (<a href="#transfer-ids" class="auto internal xref">Section 4.3</a>).<a href="#section-5.3-4.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-5.3-4.3">total-length:</dt>
@@ -1850,7 +1851,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <dl class="references">
 <dt id="BTPU">[BTPU]</dt>
         <dd>
-<span class="refAuthor">Taylor, R.</span>, <span class="refTitle">"Bundle Transfer Protocol - Unidirectional"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-dtn-btpu-02</span>, <time datetime="2026-02-17" class="refDate">17 February 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-dtn-btpu-02">https://datatracker.ietf.org/doc/html/draft-ietf-dtn-btpu-02</a>&gt;</span>. </dd>
+<span class="refAuthor">Taylor, R.</span>, <span class="refTitle">"Bundle Transfer Protocol - Unidirectional"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-dtn-btpu-03</span>, <time datetime="2026-07-19" class="refDate">19 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-dtn-btpu-03">https://datatracker.ietf.org/doc/html/draft-ietf-dtn-btpu-03</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="GRE">[GRE]</dt>
         <dd>
@@ -1933,7 +1934,7 @@ encapsulation-payload = [
       </h2>
 <p id="appendix-B-1">This document is directly derived from draft-ietf-dtn-bibect, authored by Scott Burleigh, Alberto Montilla, Joshua Deaton, and Carlo Caini; its architecture and concepts originate with them. The central insight — that a BP network can itself serve as the "link layer" beneath a further layer of bundle protocol — is Scott Burleigh's, and the encapsulation-only scope of this document is a return to that of his original 2013 formulation, draft-irtf-burleigh-bibe.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 <p id="appendix-B-2">The segmentation mechanism was designed within the CCSDS Bundle-in-Bundle Encapsulation effort of the Space Internetworking Services (SIS-DTN) working group, which identified bundle segmentation, rather than BPv7 fragmentation, as the appropriate tool for carrying large bundles over size-limited paths, and defined the representation this document adopts. Joshua Deaton contributed to both the IETF and CCSDS strands of that work, which was demonstrated in a prototype implementation within DTNME at NASA. The segmentation model is aligned with the transfer/segment design of <span>[<a href="#BTPU" class="cite xref">BTPU</a>]</span>.<a href="#appendix-B-2" class="pilcrow">¶</a></p>
-<p id="appendix-B-3">Brian Sipos contributed the CDDL formulation in <a href="#cddl" class="auto internal xref">Appendix A</a>, and the discipline of keeping normative text definitions strictly separate from CDDL.<a href="#appendix-B-3" class="pilcrow">¶</a></p>
+<p id="appendix-B-3">Brian Sipos contributed the CDDL formulation in <a href="#cddl" class="auto internal xref">Appendix A</a>, the discipline of keeping normative text definitions strictly separate from CDDL, and the review that led to the PDU-derived Transfer ID scope of <a href="#transfer-ids" class="auto internal xref">Section 4.3</a>.<a href="#appendix-B-3" class="pilcrow">¶</a></p>
 <p id="appendix-B-4">The original bundle-in-bundle encapsulation concept derives from draft-irtf-dtnrg-bundle-encapsulation (2009) by Susan Symington, Bob Durst, and Keith Scott of The MITRE Corporation, whose influence is gratefully acknowledged.<a href="#appendix-B-4" class="pilcrow">¶</a></p>
 </section>
 </div>
