@@ -27,6 +27,11 @@ author:
   organization: Aalyria Technologies
   email: rtaylor@aalyria.com
 
+- fullname: Alberto Montilla
+  role: editor
+  organization: Spatiam Corporation
+  email: a.montilla@spatiam.com
+
 # EDNOTE: This document replaces the expired draft-ietf-dtn-bibect-05 under a
 
 # new name; the datatracker "Replaces: draft-ietf-dtn-bibect" relationship
@@ -45,11 +50,6 @@ contributor:
   organization: IPNGROUP
   email: sburleig.sb@gmail.com
   contribution: Author of the successive BIBE Internet-Drafts, from draft-irtf-burleigh-bibe (2013) through draft-ietf-dtn-bibect, from which this document is directly derived; the BIBE architecture is his.
-
-- fullname: Alberto Montilla
-  organization: Spatiam Corporation
-  email: a.montilla@spatiam.com
-  contribution: Co-author of draft-ietf-dtn-bibect.
 
 - fullname: Joshua Deaton
   organization: SAIC
