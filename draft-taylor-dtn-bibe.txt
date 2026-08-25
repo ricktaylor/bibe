@@ -4,8 +4,8 @@
 
 Network Working Group                                     R. Taylor, Ed.
 Internet-Draft                                      Aalyria Technologies
-Intended status: Standards Track                            22 July 2026
-Expires: 23 January 2027
+Intended status: Standards Track                          25 August 2026
+Expires: 26 February 2027
 
 
                      Bundle-in-Bundle Encapsulation
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 January 2027.
+   This Internet-Draft will expire on 26 February 2027.
 
 Copyright Notice
 
@@ -95,7 +95,8 @@ Table of Contents
      7.1.  Composition with BPSec
      7.2.  Circumvention of Policy Enforcement
      7.3.  Spoofing of the Encapsulated Bundle
-     7.4.  Resource Exhaustion
+     7.4.  Injection Against Transfers
+     7.5.  Resource Exhaustion
    8.  IANA Considerations
    9.  References
      9.1.  Normative References
@@ -289,9 +290,10 @@ Table of Contents
 
    *  A "decapsulation element", registered in one or more endpoints of
       the decapsulating node: it takes delivery of the payloads of
-      encapsulating bundles, performs reassembly when required, and
-      presents encapsulated bundles to the BPA for forwarding and/or
-      delivery in the standard manner (Section 4.4).
+      encapsulating bundles, performs reassembly when required, and,
+      acting in the capacity of a convergence-layer adapter, presents
+      encapsulated bundles to the BPA for forwarding and/or delivery in
+      the standard manner (Section 4.4).
 
    Figure 1 illustrates the asymmetry of the model: the encapsulation
    function operates on the forwarding path of the encapsulating node,
@@ -327,11 +329,19 @@ Table of Contents
    egress forwarding path, or integrated in some other way.  Nothing in
    this document depends on the choice.
 
-   The decapsulation element, by contrast, cannot be a convergence-layer
-   adapter: it must take delivery of the payloads of bundles addressed
-   to it, and it therefore MUST be registered in one or more endpoints —
-   in the terms of Section 3.2 of [RFC9171], it is an element of the
-   node's application agent.
+   The decapsulation element, by contrast, cannot be realized solely as
+   a convergence-layer adapter: it takes delivery of the payloads of
+   bundles addressed to it, and it therefore MUST be registered in one
+   or more endpoints — in the terms of Section 3.2 of [RFC9171], it acts
+   in the capacity of an element of the node's application agent.  When
+   it presents an encapsulated bundle to the BPA, however, it presents a
+   received bundle for the reception processing of Section 5.6 of
+   [RFC9171] (Section 4.4), and in doing so acts in the capacity of a
+   convergence-layer adapter.  Nothing in this document prevents a
+   single component from acting in both capacities — indeed, taking
+   delivery of encapsulation payloads in the capacity of an application-
+   agent element and presenting encapsulated bundles in the capacity of
+   a convergence-layer adapter is the natural realization.
 
    The choice of endpoints in which a decapsulation element is
    registered is a matter of administrative policy at the decapsulating
@@ -342,11 +352,18 @@ Table of Contents
    which a "well-known service" convention would be required, and the
    absence of one denies adversaries a predictable target for
    unsolicited traffic (Section 7).  A decapsulation endpoint SHOULD be
-   a singleton endpoint.  The Bundle Protocol does not specify which
-   member or members of an endpoint with more than one member take
-   delivery of any particular bundle; the consequences of this for BIBE
-   — duplication of whole-bundle payloads, and segmented transfers that
-   can never be reassembled — are set out in Section 4.2.
+   an endpoint formed in a URI scheme whose procedures define which
+   member or members of the endpoint take delivery of a bundle destined
+   for it.  A singleton endpoint satisfies this trivially; so would an
+   endpoint in a scheme with defined multicast delivery semantics —
+   delivery to every member — which would realize multicast BIBE:
+   encapsulated forwarding to every member of the decapsulation endpoint
+   at once.  What is to be avoided is an endpoint with more than one
+   member for which the choice of delivering member is left unspecified,
+   as the Bundle Protocol leaves it for multi-member endpoints in the
+   dtn scheme; the consequences of that indeterminacy for BIBE —
+   unpredictable duplication of whole-bundle payloads, and segmented
+   transfers that can never be reassembled — are set out in Section 4.2.
 
    Note that BIBE encapsulation is a forwarding operation, not a
    delivery operation: policy (including BPSec) applicable to the
@@ -367,13 +384,20 @@ Table of Contents
    function.
 
    The bundle so presented is the bundle as the encapsulating node
-   forwards it: encapsulation is a forwarding operation (Section 3), and
-   the forwarding-time processing that would precede transmission over
-   any convergence-layer adapter — in particular the Previous Node block
-   replacement of Section 4.4.1 of [RFC9171], subject to the
-   encapsulating node's policy — SHOULD be applied to the bundle before
-   its octets are captured for encapsulation.  The consequences for the
-   blocks of the encapsulated bundle are set out in Section 5.
+   forwards it.  The forwarding-time processing that precedes
+   transmission over any convergence-layer adapter — in particular the
+   Previous Node block replacement of Section 4.4.1 of [RFC9171],
+   subject to the encapsulating node's policy — is performed by the BPA
+   in the normal manner, exactly as when forwarding via any other
+   convergence-layer protocol; it is not a function of the encapsulation
+   function.  Because this document does not require that the
+   encapsulation function be realized as a convergence-layer adapter
+   (Section 3), however, the capture point must be pinned explicitly:
+   the octets captured for encapsulation SHOULD be those of the bundle
+   after that forwarding-time processing, so that, for example, a
+   Previous Node block frozen into the encapsulated bundle identifies
+   the encapsulating node.  The consequences for the blocks of the
+   encapsulated bundle are set out in Section 5.
 
    The encapsulation function then generates the payload or payloads:
 
@@ -450,20 +474,25 @@ Table of Contents
    its Transfer ID remains unavailable for reuse until that same time
    (Section 4.3).
 
-   Segmentation requires that every segment of a transfer be delivered
-   to the same decapsulation element: reassembly state is held by the
-   element that takes delivery (Section 4.5), and a transfer whose
-   segments are divided among different elements can never complete.
-   When a decapsulation endpoint has more than one member node, the
-   Bundle Protocol does not specify which member takes delivery of any
-   particular bundle, so distinct encapsulating bundles of one transfer
-   may be delivered to different members; each member then accumulates a
+   Segmentation requires that any decapsulation element taking delivery
+   of a segment of a transfer take delivery of every segment of that
+   transfer: reassembly state is held by the element that takes delivery
+   (Section 4.5), and an element holding only some of a transfer's
+   segments can never complete it.  A singleton endpoint satisfies this
+   requirement trivially.  An endpoint in a scheme whose delivery
+   procedures deliver every bundle to every member (Section 3) also
+   satisfies it: each member takes delivery of the complete set of
+   segments and reassembles independently.  What cannot satisfy it is a
+   multi-member endpoint for which the choice of delivering member is
+   unspecified: distinct encapsulating bundles of one transfer may then
+   be delivered to different members, each member accumulates a
    disjoint, incomplete set of segments, and the transfer fails silently
    at its expiry.  Accordingly, an encapsulating node MUST NOT segment a
-   bundle toward a decapsulation endpoint unless that endpoint is known
-   to be a singleton endpoint — by the rules of the EID's scheme (every
-   'ipn' scheme EID identifies a singleton endpoint, Section 5.1 of
-   [RFC9758]) or by configuration.  Whole-bundle payloads are not
+   bundle toward a decapsulation endpoint unless it is known — by the
+   rules of the EID's scheme (every 'ipn' scheme EID identifies a
+   singleton endpoint, Section 5.1 of [RFC9758]) or by configuration —
+   that every bundle destined for that endpoint is delivered either to a
+   single member or to every member.  Whole-bundle payloads are not
    subject to this constraint: any member taking delivery holds the
    entire encapsulated bundle, although delivery to more than one member
    duplicates the encapsulated bundle at each.
@@ -514,12 +543,15 @@ Table of Contents
    decapsulation element:
 
    *  If the payload is a whole-bundle payload, the encapsulated bundle
-      SHALL be presented to the BPA, whereupon reception proceeds as
-      defined in Section 5.6 of [RFC9171]: the encapsulated bundle may
-      be forwarded, delivered, etc.  Where the decapsulated data is not
-      a BPv7 bundle (see Section 1.1), its disposition is determined by
-      examination of its initial octets and is an implementation matter
-      — e.g. presentation of a BPv6 bundle to a BPv6 agent.
+      SHALL be presented to the BPA as a received bundle — the
+      decapsulation element here acting in the capacity of a
+      convergence-layer adapter (Section 3) — whereupon reception
+      proceeds as defined in Section 5.6 of [RFC9171]: the encapsulated
+      bundle may be forwarded, delivered, etc.  Where the decapsulated
+      data is not a BPv7 bundle (see Section 1.1), its disposition is
+      determined by examination of its initial octets and is an
+      implementation matter — e.g. presentation of a BPv6 bundle to a
+      BPv6 agent.
 
    *  If the payload is a segment payload and the decapsulation element
       does not support reassembly, the element SHALL discard the
@@ -570,9 +602,10 @@ Table of Contents
 
    *  If, after insertion, every octet in the range zero to total-length
       has been received, reassembly is complete: the reassembled
-      encapsulated bundle SHALL be presented to the BPA, whereupon
-      reception proceeds as defined in Section 5.6 of [RFC9171], and the
-      reassembly structure SHALL be discarded.
+      encapsulated bundle SHALL be presented to the BPA as a received
+      bundle (Section 3), whereupon reception proceeds as defined in
+      Section 5.6 of [RFC9171], and the reassembly structure SHALL be
+      discarded.
 
 4.6.  Reassembly State
 
@@ -589,7 +622,9 @@ Table of Contents
    the same local resource management policies that govern any other
    storage the node commits.  A transfer whose state is discarded under
    such policy has simply failed: the encapsulated bundle is never
-   presented to the BPA.
+   presented to the BPA.  A configured upper bound on the interval for
+   which an incomplete transfer is retained is one such policy, and is
+   specifically recommended in Section 7.5.
 
 5.  The Encapsulating Bundle
 
@@ -737,10 +772,24 @@ Table of Contents
    time.  This is an unavoidable consequence of carrying the
    encapsulated bundle opaquely; the lifetime rule of Section 5.1 bounds
    the error to at most the remaining lifetime of the encapsulated
-   bundle at encapsulation.  The decapsulating node cannot correct the
-   encapsulated bundle's Bundle Age block: doing so would modify the
+   bundle at encapsulation.  The decapsulation element cannot correct
+   the encapsulated bundle's Bundle Age block: doing so would modify the
    encapsulated bundle, violating the opacity of the tunnel and
-   invalidating any integrity protection covering it.
+   invalidating any integrity protection covering it.  Once the
+   encapsulated bundle has been presented to the BPA of the
+   decapsulating node, however, tunnel opacity is no longer at stake:
+   the bundle is processed as any received bundle, and the BPA MAY
+   account for the tunnel transit time in the Bundle Age block in the
+   manner of Section 4.4.2 of [RFC9171], exactly as a receiving node may
+   account for known transmission time over any other convergence layer.
+   The tunnel transit time may be known a priori (e.g. from a contact
+   plan) or measured from the encapsulating bundles themselves: for a
+   whole-bundle payload, the age of the encapsulating bundle at delivery
+   — computed from its creation timestamp, or carried in its own Bundle
+   Age block — is precisely the tunnel transit time, and for a segmented
+   transfer the interval from the earliest creation timestamp among the
+   transfer's encapsulating bundles to the completion of reassembly
+   serves the same purpose.
 
    The state in which the encapsulated bundle's blocks are frozen is the
    state in which the encapsulating node forwards it (Section 4.1).  A
@@ -962,19 +1011,53 @@ Table of Contents
    encapsulated bundle requires BPSec applied to the encapsulated bundle
    itself.
 
-7.4.  Resource Exhaustion
+7.4.  Injection Against Transfers
+
+   An adversary able to cause a fabricated bundle to be delivered at a
+   decapsulation endpoint, bearing the (source node ID, destination EID)
+   pair and Transfer ID of a transfer in progress, can attack that
+   transfer.  An inconsistent forged segment — one with a mismatched
+   total-length, or content overlapping previously received ranges —
+   causes the reassembly rules of Section 4.5 to discard the transfer;
+   this is a targeted denial of service against a single transfer.
+   Note, however, that the discard rules are not the vulnerability: the
+   same adversary can instead inject a consistent forged segment —
+   matching total-length, at an offset not yet received — and thereby
+   corrupt the reassembled bundle silently, which no reassembly rule can
+   detect.  Injection of forged segments is fatal to a transfer whatever
+   the discard rules do; the rules of Section 4.5 merely convert the
+   detectable subset of such corruptions into prompt failure, releasing
+   reassembly state rather than expending further resources on a
+   transfer that can no longer complete correctly.
+
+   The mitigation is the same as for resource exhaustion (Section 7.5):
+   authenticate encapsulating bundles (e.g. with a BIB covering the
+   payload) so that forged payloads are discarded before they reach the
+   reassembly procedures, and note that integrity protection applied to
+   the encapsulated bundle itself, surviving the tunnel intact
+   (Section 5), detects any corrupt reassembly after decapsulation.
+
+7.5.  Resource Exhaustion
 
    A decapsulating node is exposed to resource-exhaustion attack by an
    adversary transmitting incomplete transfers, or segment payloads with
    large total-length values.  Although Section 4.6 bounds the retention
    of reassembly state by the expiry of the encapsulating bundles, that
    expiry is claimed by the sender: an adversary can assign its
-   encapsulating bundles distant expiry times.  Because decapsulation
-   endpoints are established by administrative policy rather than at a
-   well-known service identifier (Section 3), an adversary has no
-   predictable target for such traffic; operators SHOULD treat
-   decapsulation endpoint IDs as configuration shared only with
-   authorized tunnel peers.  The expiry deadline and local resource
+   encapsulating bundles distant expiry times and simply decline to send
+   one or more segments.  A decapsulating node SHOULD therefore be
+   configurable with an upper bound of its own on the retention of
+   reassembly state — a maximum interval for which an incomplete
+   transfer may be held, or equivalently a maximum acceptable remaining
+   lifetime for encapsulating bundles carrying segment payloads — and
+   discard, as Section 4.6 permits, any transfer exceeding it: the
+   sender-claimed expiry then bounds well-behaved transfers, while the
+   configured bound caps the exposure to hostile or broken ones.
+   Because decapsulation endpoints are established by administrative
+   policy rather than at a well-known service identifier (Section 3), an
+   adversary has no predictable target for such traffic; operators
+   SHOULD treat decapsulation endpoint IDs as configuration shared only
+   with authorized tunnel peers.  The expiry deadline and local resource
    management policies of Section 4.6 mitigate this; deployments SHOULD
    additionally authenticate encapsulating bundles (e.g. with a BIB
    covering the payload) so that payloads from unauthorized sources can

@@ -17,14 +17,14 @@
 <meta content="draft-taylor-dtn-bibe-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.34.0
-    Python 3.14.5
+    Python 3.14.7
     ConfigArgParse 1.7.5
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.10.1
+    platformdirs 4.11.3
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
@@ -64,7 +64,6 @@
   src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
 @font-face {
   font-family: 'Lora';
   font-style: italic;
@@ -113,7 +112,6 @@
   src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
 @font-face {
   font-family: 'Lora';
   font-style: normal;
@@ -178,7 +176,6 @@
   font-display: swap;
   src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
 }
 
 @font-face {
@@ -1047,11 +1044,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">BIBE</td>
-<td class="right">July 2026</td>
+<td class="right">August 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Taylor</td>
-<td class="center">Expires 23 January 2027</td>
+<td class="center">Expires 26 February 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1064,12 +1061,12 @@ svg {
 <dd class="internet-draft">draft-taylor-dtn-bibe-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-22" class="published">22 July 2026</time>
+<time datetime="2026-08-25" class="published">25 August 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-23">23 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-02-26">26 February 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1120,7 +1117,7 @@ svg {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 23 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 26 February 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1229,7 +1226,10 @@ svg {
                 <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-spoofing-of-the-encapsulate" class="internal xref">Spoofing of the Encapsulated Bundle</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
-                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-resource-exhaustion" class="internal xref">Resource Exhaustion</a></p>
+                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-injection-against-transfers" class="internal xref">Injection Against Transfers</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5">
+                <p id="section-toc.1-1.7.2.5.1"><a href="#section-7.5" class="auto internal xref">7.5</a>.  <a href="#name-resource-exhaustion" class="internal xref">Resource Exhaustion</a></p>
 </li>
             </ul>
 </li>
@@ -1384,7 +1384,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
           <p id="section-3-2.1.1">An "encapsulation function", invoked by the BPA of the encapsulating node in the course of forwarding a bundle: it generates one or more payloads, each encapsulating all or part of the bundle being forwarded, and, acting in the capacity of a bundle source, sources the encapsulating bundles that carry them (<a href="#transmission" class="auto internal xref">Section 4.1</a>). Each encapsulating bundle is a new bundle, originated at the encapsulating node; see <a href="#encap-bundle" class="auto internal xref">Section 5</a>.<a href="#section-3-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-2.2">
-          <p id="section-3-2.2.1">A "decapsulation element", registered in one or more endpoints of the decapsulating node: it takes delivery of the payloads of encapsulating bundles, performs reassembly when required, and presents encapsulated bundles to the BPA for forwarding and/or delivery in the standard manner (<a href="#reception" class="auto internal xref">Section 4.4</a>).<a href="#section-3-2.2.1" class="pilcrow">¶</a></p>
+          <p id="section-3-2.2.1">A "decapsulation element", registered in one or more endpoints of the decapsulating node: it takes delivery of the payloads of encapsulating bundles, performs reassembly when required, and, acting in the capacity of a convergence-layer adapter, presents encapsulated bundles to the BPA for forwarding and/or delivery in the standard manner (<a href="#reception" class="auto internal xref">Section 4.4</a>).<a href="#section-3-2.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-3-3"><a href="#fig-model" class="auto internal xref">Figure 1</a> illustrates the asymmetry of the model: the encapsulation function operates on the forwarding path of the encapsulating node, while the decapsulation element is an element of the application agent of the decapsulating node; the encapsulated bundle experiences the entire tunnel as a single hop.<a href="#section-3-3" class="pilcrow">¶</a></p>
@@ -1483,8 +1483,8 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
         </figcaption></figure>
 </div>
 <p id="section-3-5">How a BPA selects the encapsulation function is an implementation matter: it might be realized as a convergence-layer adapter selected by a forwarding table entry, applied as a filter or transform on the egress forwarding path, or integrated in some other way. Nothing in this document depends on the choice.<a href="#section-3-5" class="pilcrow">¶</a></p>
-<p id="section-3-6">The decapsulation element, by contrast, cannot be a convergence-layer adapter: it must take delivery of the payloads of bundles addressed to it, and it therefore <span class="bcp14">MUST</span> be registered in one or more endpoints — in the terms of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-3.2" class="relref">Section 3.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, it is an element of the node's application agent.<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">The choice of endpoints in which a decapsulation element is registered is a matter of administrative policy at the decapsulating node. A BIBE tunnel is a deliberate, bilaterally configured arrangement — an encapsulating node must in any case hold per-peer configuration (<a href="#deployment" class="auto internal xref">Section 6</a>), of which the decapsulation endpoint ID is simply one element — so there is no unsolicited-contact scenario for which a "well-known service" convention would be required, and the absence of one denies adversaries a predictable target for unsolicited traffic (<a href="#security-considerations" class="auto internal xref">Section 7</a>). A decapsulation endpoint <span class="bcp14">SHOULD</span> be a singleton endpoint. The Bundle Protocol does not specify which member or members of an endpoint with more than one member take delivery of any particular bundle; the consequences of this for BIBE — duplication of whole-bundle payloads, and segmented transfers that can never be reassembled — are set out in <a href="#segmentation" class="auto internal xref">Section 4.2</a>.<a href="#section-3-7" class="pilcrow">¶</a></p>
+<p id="section-3-6">The decapsulation element, by contrast, cannot be realized solely as a convergence-layer adapter: it takes delivery of the payloads of bundles addressed to it, and it therefore <span class="bcp14">MUST</span> be registered in one or more endpoints — in the terms of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-3.2" class="relref">Section 3.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, it acts in the capacity of an element of the node's application agent. When it presents an encapsulated bundle to the BPA, however, it presents a received bundle for the reception processing of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.6" class="relref">Section 5.6</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span> (<a href="#reception" class="auto internal xref">Section 4.4</a>), and in doing so acts in the capacity of a convergence-layer adapter. Nothing in this document prevents a single component from acting in both capacities — indeed, taking delivery of encapsulation payloads in the capacity of an application-agent element and presenting encapsulated bundles in the capacity of a convergence-layer adapter is the natural realization.<a href="#section-3-6" class="pilcrow">¶</a></p>
+<p id="section-3-7">The choice of endpoints in which a decapsulation element is registered is a matter of administrative policy at the decapsulating node. A BIBE tunnel is a deliberate, bilaterally configured arrangement — an encapsulating node must in any case hold per-peer configuration (<a href="#deployment" class="auto internal xref">Section 6</a>), of which the decapsulation endpoint ID is simply one element — so there is no unsolicited-contact scenario for which a "well-known service" convention would be required, and the absence of one denies adversaries a predictable target for unsolicited traffic (<a href="#security-considerations" class="auto internal xref">Section 7</a>). A decapsulation endpoint <span class="bcp14">SHOULD</span> be an endpoint formed in a URI scheme whose procedures define which member or members of the endpoint take delivery of a bundle destined for it. A singleton endpoint satisfies this trivially; so would an endpoint in a scheme with defined multicast delivery semantics — delivery to every member — which would realize multicast BIBE: encapsulated forwarding to every member of the decapsulation endpoint at once. What is to be avoided is an endpoint with more than one member for which the choice of delivering member is left unspecified, as the Bundle Protocol leaves it for multi-member endpoints in the dtn scheme; the consequences of that indeterminacy for BIBE — unpredictable duplication of whole-bundle payloads, and segmented transfers that can never be reassembled — are set out in <a href="#segmentation" class="auto internal xref">Section 4.2</a>.<a href="#section-3-7" class="pilcrow">¶</a></p>
 <p id="section-3-8">Note that BIBE encapsulation is a forwarding operation, not a delivery operation: policy (including BPSec) applicable to the forwarding path of the encapsulating bundle applies to it in the normal way. The payloads generated by the encapsulation function are plaintext; any confidentiality protection is applied by the BPA in the course of transmitting the encapsulating bundle, exactly as for any other bundle payload.<a href="#section-3-8" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1499,7 +1499,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-transmission" class="section-name selfRef">Transmission</a>
         </h3>
 <p id="section-4.1-1">When the BPA of the encapsulating node determines — by forwarding table entry, forwarding policy, or other configuration — that a bundle is to be forwarded by encapsulation toward a specified decapsulation endpoint, the bundle is presented to the encapsulation function.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1-2">The bundle so presented is the bundle as the encapsulating node forwards it: encapsulation is a forwarding operation (<a href="#model" class="auto internal xref">Section 3</a>), and the forwarding-time processing that would precede transmission over any convergence-layer adapter — in particular the Previous Node block replacement of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.4.1" class="relref">Section 4.4.1</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, subject to the encapsulating node's policy — <span class="bcp14">SHOULD</span> be applied to the bundle before its octets are captured for encapsulation. The consequences for the blocks of the encapsulated bundle are set out in <a href="#encap-bundle" class="auto internal xref">Section 5</a>.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">The bundle so presented is the bundle as the encapsulating node forwards it. The forwarding-time processing that precedes transmission over any convergence-layer adapter — in particular the Previous Node block replacement of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.4.1" class="relref">Section 4.4.1</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, subject to the encapsulating node's policy — is performed by the BPA in the normal manner, exactly as when forwarding via any other convergence-layer protocol; it is not a function of the encapsulation function. Because this document does not require that the encapsulation function be realized as a convergence-layer adapter (<a href="#model" class="auto internal xref">Section 3</a>), however, the capture point must be pinned explicitly: the octets captured for encapsulation <span class="bcp14">SHOULD</span> be those of the bundle after that forwarding-time processing, so that, for example, a Previous Node block frozen into the encapsulated bundle identifies the encapsulating node. The consequences for the blocks of the encapsulated bundle are set out in <a href="#encap-bundle" class="auto internal xref">Section 5</a>.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
 <p id="section-4.1-3">The encapsulation function then generates the payload or payloads:<a href="#section-4.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1-4.1">
@@ -1533,7 +1533,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 </li>
         </ul>
 <p id="section-4.2-5">Requesting transmission of the first encapsulating bundle of a transfer commits the encapsulation function to the remainder: this protocol provides no abort or cancellation signal, so a transfer abandoned partway is indistinguishable, at the decapsulating node, from loss of the remaining encapsulating bundles in transit (<a href="#deployment" class="auto internal xref">Section 6</a>). An abandoned transfer occupies reassembly state at the decapsulation element until the transfer's expiry (<a href="#resources" class="auto internal xref">Section 4.6</a>), and its Transfer ID remains unavailable for reuse until that same time (<a href="#transfer-ids" class="auto internal xref">Section 4.3</a>).<a href="#section-4.2-5" class="pilcrow">¶</a></p>
-<p id="section-4.2-6">Segmentation requires that every segment of a transfer be delivered to the same decapsulation element: reassembly state is held by the element that takes delivery (<a href="#reassembly" class="auto internal xref">Section 4.5</a>), and a transfer whose segments are divided among different elements can never complete. When a decapsulation endpoint has more than one member node, the Bundle Protocol does not specify which member takes delivery of any particular bundle, so distinct encapsulating bundles of one transfer may be delivered to different members; each member then accumulates a disjoint, incomplete set of segments, and the transfer fails silently at its expiry. Accordingly, an encapsulating node <span class="bcp14">MUST NOT</span> segment a bundle toward a decapsulation endpoint unless that endpoint is known to be a singleton endpoint — by the rules of the EID's scheme (every 'ipn' scheme EID identifies a singleton endpoint, <span><a href="https://rfc-editor.org/rfc/rfc9758#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9758" class="cite xref">RFC9758</a>]</span>) or by configuration. Whole-bundle payloads are not subject to this constraint: any member taking delivery holds the entire encapsulated bundle, although delivery to more than one member duplicates the encapsulated bundle at each.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+<p id="section-4.2-6">Segmentation requires that any decapsulation element taking delivery of a segment of a transfer take delivery of every segment of that transfer: reassembly state is held by the element that takes delivery (<a href="#reassembly" class="auto internal xref">Section 4.5</a>), and an element holding only some of a transfer's segments can never complete it. A singleton endpoint satisfies this requirement trivially. An endpoint in a scheme whose delivery procedures deliver every bundle to every member (<a href="#model" class="auto internal xref">Section 3</a>) also satisfies it: each member takes delivery of the complete set of segments and reassembles independently. What cannot satisfy it is a multi-member endpoint for which the choice of delivering member is unspecified: distinct encapsulating bundles of one transfer may then be delivered to different members, each member accumulates a disjoint, incomplete set of segments, and the transfer fails silently at its expiry. Accordingly, an encapsulating node <span class="bcp14">MUST NOT</span> segment a bundle toward a decapsulation endpoint unless it is known — by the rules of the EID's scheme (every 'ipn' scheme EID identifies a singleton endpoint, <span><a href="https://rfc-editor.org/rfc/rfc9758#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9758" class="cite xref">RFC9758</a>]</span>) or by configuration — that every bundle destined for that endpoint is delivered either to a single member or to every member. Whole-bundle payloads are not subject to this constraint: any member taking delivery holds the entire encapsulated bundle, although delivery to more than one member duplicates the encapsulated bundle at each.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="transfer-ids">
@@ -1553,7 +1553,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <p id="section-4.4-1">Upon delivery of the payload of an encapsulating bundle to a decapsulation element:<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.4-2.1">
-            <p id="section-4.4-2.1.1">If the payload is a whole-bundle payload, the encapsulated bundle <span class="bcp14">SHALL</span> be presented to the BPA, whereupon reception proceeds as defined in <span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.6" class="relref">Section 5.6</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>: the encapsulated bundle may be forwarded, delivered, etc. Where the decapsulated data is not a BPv7 bundle (see <a href="#use-cases" class="auto internal xref">Section 1.1</a>), its disposition is determined by examination of its initial octets and is an implementation matter — e.g. presentation of a BPv6 bundle to a BPv6 agent.<a href="#section-4.4-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-4.4-2.1.1">If the payload is a whole-bundle payload, the encapsulated bundle <span class="bcp14">SHALL</span> be presented to the BPA as a received bundle — the decapsulation element here acting in the capacity of a convergence-layer adapter (<a href="#model" class="auto internal xref">Section 3</a>) — whereupon reception proceeds as defined in <span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.6" class="relref">Section 5.6</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>: the encapsulated bundle may be forwarded, delivered, etc. Where the decapsulated data is not a BPv7 bundle (see <a href="#use-cases" class="auto internal xref">Section 1.1</a>), its disposition is determined by examination of its initial octets and is an implementation matter — e.g. presentation of a BPv6 bundle to a BPv6 agent.<a href="#section-4.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.4-2.2">
             <p id="section-4.4-2.2.1">If the payload is a segment payload and the decapsulation element does not support reassembly, the element <span class="bcp14">SHALL</span> discard the payload. Support for reassembly is <span class="bcp14">OPTIONAL</span>; support for generating segments is likewise <span class="bcp14">OPTIONAL</span>.<a href="#section-4.4-2.2.1" class="pilcrow">¶</a></p>
@@ -1585,7 +1585,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
             <p id="section-4.5-3.4.1">Otherwise the decapsulation element <span class="bcp14">SHALL</span> insert the segment into the reassembly structure.<a href="#section-4.5-3.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.5-3.5">
-            <p id="section-4.5-3.5.1">If, after insertion, every octet in the range zero to total-length has been received, reassembly is complete: the reassembled encapsulated bundle <span class="bcp14">SHALL</span> be presented to the BPA, whereupon reception proceeds as defined in <span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.6" class="relref">Section 5.6</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, and the reassembly structure <span class="bcp14">SHALL</span> be discarded.<a href="#section-4.5-3.5.1" class="pilcrow">¶</a></p>
+            <p id="section-4.5-3.5.1">If, after insertion, every octet in the range zero to total-length has been received, reassembly is complete: the reassembled encapsulated bundle <span class="bcp14">SHALL</span> be presented to the BPA as a received bundle (<a href="#model" class="auto internal xref">Section 3</a>), whereupon reception proceeds as defined in <span><a href="https://rfc-editor.org/rfc/rfc9171#section-5.6" class="relref">Section 5.6</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, and the reassembly structure <span class="bcp14">SHALL</span> be discarded.<a href="#section-4.5-3.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1596,7 +1596,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-4.6" class="section-number selfRef">4.6. </a><a href="#name-reassembly-state" class="section-name selfRef">Reassembly State</a>
         </h3>
 <p id="section-4.6-1">A decapsulation element retains reassembly state for a transfer only while the transfer can still complete. An incomplete transfer <span class="bcp14">MUST</span> be discarded no later than the transfer's expiry — the single expiry time shared by all encapsulating bundles of the transfer (<a href="#primary-block" class="auto internal xref">Section 5.1</a>) — both because no further segment can arrive after that time, and because the Transfer ID may thereafter be reused for a new transfer (<a href="#transfer-ids" class="auto internal xref">Section 4.3</a>): reassembly state retained beyond expiry could wrongly absorb segments of the new transfer.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
-<p id="section-4.6-2">Before that deadline, retention of reassembly state is a matter for the same local resource management policies that govern any other storage the node commits. A transfer whose state is discarded under such policy has simply failed: the encapsulated bundle is never presented to the BPA.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
+<p id="section-4.6-2">Before that deadline, retention of reassembly state is a matter for the same local resource management policies that govern any other storage the node commits. A transfer whose state is discarded under such policy has simply failed: the encapsulated bundle is never presented to the BPA. A configured upper bound on the interval for which an incomplete transfer is retained is one such policy, and is specifically recommended in <a href="#resource-exhaustion" class="auto internal xref">Section 7.5</a>.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1668,7 +1668,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
             <p id="section-5.2-2.3.1">A Previous Node block (<span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.4.1" class="relref">Section 4.4.1</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>) is inserted and replaced hop by hop on the encapsulating path in the normal manner, identifying nodes of the tunnel path, not of the encapsulated bundle's path.<a href="#section-5.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.2-3">Note that, symmetrically, the extension blocks of the encapsulated bundle are not processed while it is encapsulated. In particular, the Bundle Age block of an encapsulated bundle is not updated during tunnel transit, so the age of an encapsulated bundle originated by a node without an accurate clock is under-counted by the tunnel transit time. This is an unavoidable consequence of carrying the encapsulated bundle opaquely; the lifetime rule of <a href="#primary-block" class="auto internal xref">Section 5.1</a> bounds the error to at most the remaining lifetime of the encapsulated bundle at encapsulation. The decapsulating node cannot correct the encapsulated bundle's Bundle Age block: doing so would modify the encapsulated bundle, violating the opacity of the tunnel and invalidating any integrity protection covering it.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.2-3">Note that, symmetrically, the extension blocks of the encapsulated bundle are not processed while it is encapsulated. In particular, the Bundle Age block of an encapsulated bundle is not updated during tunnel transit, so the age of an encapsulated bundle originated by a node without an accurate clock is under-counted by the tunnel transit time. This is an unavoidable consequence of carrying the encapsulated bundle opaquely; the lifetime rule of <a href="#primary-block" class="auto internal xref">Section 5.1</a> bounds the error to at most the remaining lifetime of the encapsulated bundle at encapsulation. The decapsulation element cannot correct the encapsulated bundle's Bundle Age block: doing so would modify the encapsulated bundle, violating the opacity of the tunnel and invalidating any integrity protection covering it. Once the encapsulated bundle has been presented to the BPA of the decapsulating node, however, tunnel opacity is no longer at stake: the bundle is processed as any received bundle, and the BPA <span class="bcp14">MAY</span> account for the tunnel transit time in the Bundle Age block in the manner of <span><a href="https://rfc-editor.org/rfc/rfc9171#section-4.4.2" class="relref">Section 4.4.2</a> of [<a href="#RFC9171" class="cite xref">RFC9171</a>]</span>, exactly as a receiving node may account for known transmission time over any other convergence layer. The tunnel transit time may be known a priori (e.g. from a contact plan) or measured from the encapsulating bundles themselves: for a whole-bundle payload, the age of the encapsulating bundle at delivery — computed from its creation timestamp, or carried in its own Bundle Age block — is precisely the tunnel transit time, and for a segmented transfer the interval from the earliest creation timestamp among the transfer's encapsulating bundles to the completion of reassembly serves the same purpose.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
 <p id="section-5.2-4">The state in which the encapsulated bundle's blocks are frozen is the state in which the encapsulating node forwards it (<a href="#transmission" class="auto internal xref">Section 4.1</a>). A Previous Node block in a decapsulated bundle consequently identifies the encapsulating node: the single hop that the tunnel presents, consistent with <a href="#diagnostics" class="auto internal xref">Section 6.1</a>. The decapsulating node takes this block as it finds it — it cannot verify it in general (the encapsulating node may hold several node IDs, the encapsulated data may not be a BPv7 bundle, and the block is optional) and correcting it would modify the encapsulated bundle — but a stale or absent Previous Node block is consulted only during local processing at the decapsulating node and is replaced in the normal manner upon onward forwarding.<a href="#section-5.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1798,13 +1798,22 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <p id="section-7.3-1">Nothing in this protocol authenticates the contents of an encapsulated bundle: the source of the encapsulated bundle is whatever its primary block claims, and an authorized (or compromised) encapsulating peer can inject bundles claiming any source. Authentication of the encapsulating bundle (e.g. a Block Integrity Block (BIB) covering the payload) authenticates only the tunnel peer, not the encapsulated bundle's provenance; end-to-end assurance of the encapsulated bundle requires BPSec applied to the encapsulated bundle itself.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="resource-exhaustion">
+<div id="injection">
 <section id="section-7.4">
-        <h3 id="name-resource-exhaustion">
-<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-resource-exhaustion" class="section-name selfRef">Resource Exhaustion</a>
+        <h3 id="name-injection-against-transfers">
+<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-injection-against-transfers" class="section-name selfRef">Injection Against Transfers</a>
         </h3>
-<p id="section-7.4-1">A decapsulating node is exposed to resource-exhaustion attack by an adversary transmitting incomplete transfers, or segment payloads with large total-length values. Although <a href="#resources" class="auto internal xref">Section 4.6</a> bounds the retention of reassembly state by the expiry of the encapsulating bundles, that expiry is claimed by the sender: an adversary can assign its encapsulating bundles distant expiry times. Because decapsulation endpoints are established by administrative policy rather than at a well-known service identifier (<a href="#model" class="auto internal xref">Section 3</a>), an adversary has no predictable target for such traffic; operators <span class="bcp14">SHOULD</span> treat decapsulation endpoint IDs as configuration shared only with authorized tunnel peers. The expiry deadline and local resource management policies of <a href="#resources" class="auto internal xref">Section 4.6</a> mitigate this; deployments <span class="bcp14">SHOULD</span> additionally authenticate encapsulating bundles (e.g. with a BIB covering the payload) so that payloads from unauthorized sources can be discarded before reassembly state is committed. Authentication narrows the exposure to authorized peers but does not eliminate it: a compromised or misbehaving authorized peer can still commit reassembly storage up to whatever bound local policy enforces, and that policy is therefore the mitigation of last resort.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
-<p id="section-7.4-2">Recursive encapsulation is a related amplification hazard; see <a href="#deployment" class="auto internal xref">Section 6</a> for the required loop protections.<a href="#section-7.4-2" class="pilcrow">¶</a></p>
+<p id="section-7.4-1">An adversary able to cause a fabricated bundle to be delivered at a decapsulation endpoint, bearing the (source node ID, destination EID) pair and Transfer ID of a transfer in progress, can attack that transfer. An inconsistent forged segment — one with a mismatched total-length, or content overlapping previously received ranges — causes the reassembly rules of <a href="#reassembly" class="auto internal xref">Section 4.5</a> to discard the transfer; this is a targeted denial of service against a single transfer. Note, however, that the discard rules are not the vulnerability: the same adversary can instead inject a consistent forged segment — matching total-length, at an offset not yet received — and thereby corrupt the reassembled bundle silently, which no reassembly rule can detect. Injection of forged segments is fatal to a transfer whatever the discard rules do; the rules of <a href="#reassembly" class="auto internal xref">Section 4.5</a> merely convert the detectable subset of such corruptions into prompt failure, releasing reassembly state rather than expending further resources on a transfer that can no longer complete correctly.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
+<p id="section-7.4-2">The mitigation is the same as for resource exhaustion (<a href="#resource-exhaustion" class="auto internal xref">Section 7.5</a>): authenticate encapsulating bundles (e.g. with a BIB covering the payload) so that forged payloads are discarded before they reach the reassembly procedures, and note that integrity protection applied to the encapsulated bundle itself, surviving the tunnel intact (<a href="#encap-bundle" class="auto internal xref">Section 5</a>), detects any corrupt reassembly after decapsulation.<a href="#section-7.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="resource-exhaustion">
+<section id="section-7.5">
+        <h3 id="name-resource-exhaustion">
+<a href="#section-7.5" class="section-number selfRef">7.5. </a><a href="#name-resource-exhaustion" class="section-name selfRef">Resource Exhaustion</a>
+        </h3>
+<p id="section-7.5-1">A decapsulating node is exposed to resource-exhaustion attack by an adversary transmitting incomplete transfers, or segment payloads with large total-length values. Although <a href="#resources" class="auto internal xref">Section 4.6</a> bounds the retention of reassembly state by the expiry of the encapsulating bundles, that expiry is claimed by the sender: an adversary can assign its encapsulating bundles distant expiry times and simply decline to send one or more segments. A decapsulating node <span class="bcp14">SHOULD</span> therefore be configurable with an upper bound of its own on the retention of reassembly state — a maximum interval for which an incomplete transfer may be held, or equivalently a maximum acceptable remaining lifetime for encapsulating bundles carrying segment payloads — and discard, as <a href="#resources" class="auto internal xref">Section 4.6</a> permits, any transfer exceeding it: the sender-claimed expiry then bounds well-behaved transfers, while the configured bound caps the exposure to hostile or broken ones. Because decapsulation endpoints are established by administrative policy rather than at a well-known service identifier (<a href="#model" class="auto internal xref">Section 3</a>), an adversary has no predictable target for such traffic; operators <span class="bcp14">SHOULD</span> treat decapsulation endpoint IDs as configuration shared only with authorized tunnel peers. The expiry deadline and local resource management policies of <a href="#resources" class="auto internal xref">Section 4.6</a> mitigate this; deployments <span class="bcp14">SHOULD</span> additionally authenticate encapsulating bundles (e.g. with a BIB covering the payload) so that payloads from unauthorized sources can be discarded before reassembly state is committed. Authentication narrows the exposure to authorized peers but does not eliminate it: a compromised or misbehaving authorized peer can still commit reassembly storage up to whatever bound local policy enforces, and that policy is therefore the mitigation of last resort.<a href="#section-7.5-1" class="pilcrow">¶</a></p>
+<p id="section-7.5-2">Recursive encapsulation is a related amplification hazard; see <a href="#deployment" class="auto internal xref">Section 6</a> for the required loop protections.<a href="#section-7.5-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
