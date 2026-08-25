@@ -4,8 +4,9 @@
 
 Network Working Group                                     R. Taylor, Ed.
 Internet-Draft                                      Aalyria Technologies
-Intended status: Standards Track                          25 August 2026
-Expires: 26 February 2027
+Intended status: Standards Track                        A. Montilla, Ed.
+Expires: 26 February 2027                            Spatiam Corporation
+                                                          25 August 2026
 
 
                      Bundle-in-Bundle Encapsulation
@@ -104,7 +105,7 @@ Table of Contents
    Appendix A.  CDDL Expression
    Acknowledgments
    Contributors
-   Author's Address
+   Authors' Addresses
 
 1.  Introduction
 
@@ -1220,13 +1221,6 @@ Contributors
    burleigh-bibe (2013) through draft-ietf-dtn-bibect, from which this
    document is directly derived; the BIBE architecture is his.
 
-   Alberto Montilla
-   Spatiam Corporation
-   Email: a.montilla@spatiam.com
-
-
-   Co-author of draft-ietf-dtn-bibect.
-
    Joshua Deaton
    SAIC
    Email: joshua.e.deaton@nasa.gov
@@ -1243,8 +1237,13 @@ Contributors
 
    Co-author of draft-ietf-dtn-bibect.
 
-Author's Address
+Authors' Addresses
 
    Rick Taylor (editor)
    Aalyria Technologies
    Email: rtaylor@aalyria.com
+
+
+   Alberto Montilla (editor)
+   Spatiam Corporation
+   Email: a.montilla@spatiam.com

@@ -6,6 +6,7 @@
 <meta content="initial-scale=1.0" name="viewport">
 <title>Bundle-in-Bundle Encapsulation</title>
 <meta content="Rick Taylor" name="author">
+<meta content="Alberto Montilla" name="author">
 <meta content="
        This document describes Bundle-in-Bundle Encapsulation (BIBE), a Delay-Tolerant Networking (DTN) Bundle Protocol (BP) tunneling mechanism by which a bundle is carried as the payload of one or more encapsulating bundles, allowing security measures, routing policy, and protocol version translation to be applied to the encapsulating bundle without modification of the encapsulated bundle. The protocol includes an optional segmentation mechanism, allowing a large encapsulated bundle to be carried in multiple encapsulating bundles. 
     " name="description">
@@ -1047,7 +1048,7 @@ svg {
 <td class="right">August 2026</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Taylor</td>
+<td class="left">Taylor &amp; Montilla</td>
 <td class="center">Expires 26 February 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
@@ -1067,12 +1068,17 @@ svg {
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
 <dd class="expires"><time datetime="2027-02-26">26 February 2027</time></dd>
-<dt class="label-authors">Author:</dt>
+<dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
       <div class="author-name">R. Taylor, <span class="editor">Ed.</span>
 </div>
 <div class="org">Aalyria Technologies</div>
+</div>
+<div class="author">
+      <div class="author-name">A. Montilla, <span class="editor">Ed.</span>
+</div>
+<div class="org">Spatiam Corporation</div>
 </div>
 </dd>
 </dl>
@@ -1257,7 +1263,7 @@ svg {
             <p id="section-toc.1-1.12.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-contributors" class="internal xref">Contributors</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
-            <p id="section-toc.1-1.13.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.13.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1962,15 +1968,6 @@ encapsulation-payload = [
 </address>
 <p id="appendix-C-1">Author of the successive BIBE Internet-Drafts, from draft-irtf-burleigh-bibe (2013) through draft-ietf-dtn-bibect, from which this document is directly derived; the BIBE architecture is his.<a href="#appendix-C-1" class="pilcrow">¶</a></p>
 <address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Alberto Montilla</span></div>
-<div dir="auto" class="left"><span class="org">Spatiam Corporation</span></div>
-<div class="email">
-<span>Email:</span>
-<a href="mailto:a.montilla@spatiam.com" class="email">a.montilla@spatiam.com</a>
-</div>
-</address>
-<p id="appendix-C-2">Co-author of draft-ietf-dtn-bibect.<a href="#appendix-C-2" class="pilcrow">¶</a></p>
-<address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Joshua Deaton</span></div>
 <div dir="auto" class="left"><span class="org">SAIC</span></div>
 <div class="email">
@@ -1978,7 +1975,7 @@ encapsulation-payload = [
 <a href="mailto:joshua.e.deaton@nasa.gov" class="email">joshua.e.deaton@nasa.gov</a>
 </div>
 </address>
-<p id="appendix-C-3">Co-author of draft-ietf-dtn-bibect, and contributor to the CCSDS Orange Book segmentation work on which the segmentation mechanism of this document builds.<a href="#appendix-C-3" class="pilcrow">¶</a></p>
+<p id="appendix-C-2">Co-author of draft-ietf-dtn-bibect, and contributor to the CCSDS Orange Book segmentation work on which the segmentation mechanism of this document builds.<a href="#appendix-C-2" class="pilcrow">¶</a></p>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Carlo Caini</span></div>
 <div dir="auto" class="left"><span class="org">University of Bologna</span></div>
@@ -1987,13 +1984,13 @@ encapsulation-payload = [
 <a href="mailto:carlo.caini@unibo.it" class="email">carlo.caini@unibo.it</a>
 </div>
 </address>
-<p id="appendix-C-4">Co-author of draft-ietf-dtn-bibect.<a href="#appendix-C-4" class="pilcrow">¶</a></p>
+<p id="appendix-C-3">Co-author of draft-ietf-dtn-bibect.<a href="#appendix-C-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
 <section id="appendix-D">
-      <h2 id="name-authors-address">
-<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Rick Taylor (<span class="role">editor</span>)</span></div>
@@ -2001,6 +1998,14 @@ encapsulation-payload = [
 <div class="email">
 <span>Email:</span>
 <a href="mailto:rtaylor@aalyria.com" class="email">rtaylor@aalyria.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Alberto Montilla (<span class="role">editor</span>)</span></div>
+<div dir="auto" class="left"><span class="org">Spatiam Corporation</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:a.montilla@spatiam.com" class="email">a.montilla@spatiam.com</a>
 </div>
 </address>
 </section>
