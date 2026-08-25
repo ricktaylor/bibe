@@ -36,9 +36,11 @@ author:
 
 # new name; the datatracker "Replaces: draft-ietf-dtn-bibect" relationship
 
-# should be recorded on submission. The -05 authors are listed as Contributors
+# should be recorded on submission. Of the -05 authors, Alberto Montilla is a
 
-# below; individuals to confirm they are content with Contributor (rather than
+# co-editor of this document; the others are listed as Contributors below
+
+# and individuals to confirm they are content with Contributor (rather than
 
 # co-author) listing, and affiliations/addresses to be re-verified before
 
@@ -90,7 +92,7 @@ This document describes Bundle-in-Bundle Encapsulation (BIBE), a Delay-Tolerant 
 
 Bundle Protocol version 7 (BPv7) {{!RFC9171}} defines a layered architecture in which a Bundle Protocol Agent (BPA) relies on convergence-layer adapters (CLAs) to transfer bundles between nodes. This document defines Bundle-in-Bundle Encapsulation (BIBE), in which the transfer between two nodes is performed by a BP network itself: an outbound bundle (the "encapsulated bundle") is carried as the payload of one or more bundles (the "encapsulating bundles") which traverse the BP network between the encapsulating node and the decapsulating node in the normal manner. [^editorial]
 
-[^editorial]: This document is an editorial consolidation of prior work: the architecture and concepts originate in draft-ietf-dtn-bibect and the CCSDS Bundle-in-Bundle Encapsulation effort, and the design contributions of others are recorded in the Contributors and Acknowledgments sections. The editor claims no design novelty; the contribution of this document is to restate that body of work as a single self-contained specification.
+[^editorial]: This document is an editorial consolidation of prior work: the architecture and concepts originate in draft-ietf-dtn-bibect and the CCSDS Bundle-in-Bundle Encapsulation effort, and the design contributions of others are recorded in the Contributors and Acknowledgments sections. The editors claim no design novelty; the contribution of this document is to restate that body of work as a single self-contained specification.
 
 BIBE thus occupies the architectural position of a convergence layer — the "link layer" beneath it is itself a BP network — but this document deliberately does not require that it be implemented as a convergence-layer adapter; it specifies observable behavior only, in terms of the encapsulation function and decapsulation element defined in {{model}}.
 
