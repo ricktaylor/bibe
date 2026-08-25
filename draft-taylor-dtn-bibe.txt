@@ -122,7 +122,7 @@ Table of Contents
    // architecture and concepts originate in draft-ietf-dtn-bibect and
    // the CCSDS Bundle-in-Bundle Encapsulation effort, and the design
    // contributions of others are recorded in the Contributors and
-   // Acknowledgments sections.  The editor claims no design novelty;
+   // Acknowledgments sections.  The editors claim no design novelty;
    // the contribution of this document is to restate that body of work
    // as a single self-contained specification.
 
