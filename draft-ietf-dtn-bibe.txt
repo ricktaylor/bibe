@@ -2,15 +2,15 @@
 
 
 
-Network Working Group                                     R. Taylor, Ed.
+Delay/Disruption Tolerant Networking                      R. Taylor, Ed.
 Internet-Draft                                      Aalyria Technologies
 Intended status: Standards Track                        A. Montilla, Ed.
-Expires: 26 February 2027                            Spatiam Corporation
-                                                          25 August 2026
+Expires: 11 March 2027                               Spatiam Corporation
+                                                        7 September 2026
 
 
                      Bundle-in-Bundle Encapsulation
-                      draft-taylor-dtn-bibe-latest
+                       draft-ietf-dtn-bibe-latest
 
 Abstract
 
@@ -28,9 +28,9 @@ About This Document
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at
-   https://ricktaylor.github.io/bibe/draft-taylor-dtn-bibe.html.  Status
+   https://ricktaylor.github.io/bibe/draft-ietf-dtn-bibe.html.  Status
    information for this document may be found at
-   https://datatracker.ietf.org/doc/draft-taylor-dtn-bibe/.
+   https://datatracker.ietf.org/doc/draft-ietf-dtn-bibe/.
 
    Discussion of this document takes place on the Delay/Disruption
    Tolerant Networking Working Group mailing list (mailto:dtn@ietf.org),
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 February 2027.
+   This Internet-Draft will expire on 11 March 2027.
 
 Copyright Notice
 
@@ -1099,9 +1099,9 @@ Table of Contents
 9.2.  Informative References
 
    [BTPU]     Taylor, R., "Bundle Transfer Protocol - Unidirectional",
-              Work in Progress, Internet-Draft, draft-ietf-dtn-btpu-03,
-              19 July 2026, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-dtn-btpu-03>.
+              Work in Progress, Internet-Draft, draft-ietf-dtn-btpu-04,
+              7 September 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-dtn-btpu-04>.
 
    [GRE]      Farinacci, D., Li, T., Hanks, S., Meyer, D., and P.
               Traina, "Generic Routing Encapsulation (GRE)", RFC 2784,
