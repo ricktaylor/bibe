@@ -32,19 +32,15 @@ author:
   organization: Spatiam Corporation
   email: a.montilla@spatiam.com
 
-# EDNOTE: This document replaces the expired draft-ietf-dtn-bibect-05 under a
+# EDNOTE: This document replaces the expired draft-ietf-dtn-bibect-05. Of the
 
-# new name; the datatracker "Replaces: draft-ietf-dtn-bibect" relationship
+# -05 authors, Alberto Montilla is a co-editor of this document; the others
 
-# should be recorded on submission. Of the -05 authors, Alberto Montilla is a
+# are listed as Contributors below, and individuals to confirm they are
 
-# co-editor of this document; the others are listed as Contributors below
+# content with Contributor (rather than co-author) listing, with
 
-# and individuals to confirm they are content with Contributor (rather than
-
-# co-author) listing, and affiliations/addresses to be re-verified before
-
-# submission
+# affiliations/addresses to be re-verified
 
 contributor:
 
