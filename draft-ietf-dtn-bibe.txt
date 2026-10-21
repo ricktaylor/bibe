@@ -1152,10 +1152,12 @@ Table of Contents
               <https://www.rfc-editor.org/rfc/rfc2003>.
 
    [RECURSIVE-DTN]
-              Fraire, J. A., Feldmann, M., and F. Walter, "Recursive
+              Feldmann, M., Nöthlich, T., Walter, F., Nitsch, M.,
+              Fraire, J. A., Murzik, G. A., and F. Fuchs, "Recursive
               Delay-Tolerant Networking using Bundle-in-Bundle
-              Encapsulation", DOI 10.48550/arXiv.2510.27325, October
-              2025, <https://arxiv.org/abs/2510.27325>.
+              Encapsulation", DOI 10.48550/arXiv.2510.27325,
+              arXiv 2510.27325, October 2025,
+              <https://arxiv.org/abs/2510.27325>.
 
    [RFC8610]  Birkholz, H., Vigano, C., and C. Bormann, "Concise Data
               Definition Language (CDDL): A Notational Convention to
