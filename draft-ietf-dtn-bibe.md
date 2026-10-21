@@ -77,6 +77,19 @@ informative:
   TUNMTU: RFC4459
   TUNLIMIT: RFC2473
   TUNSEC: RFC6169
+  RECURSIVE-DTN:
+    title: Recursive Delay-Tolerant Networking using Bundle-in-Bundle Encapsulation
+    author:
+      - ins: J. A. Fraire
+        name: Juan A. Fraire
+      - ins: M. Feldmann
+        name: Marius Feldmann
+      - ins: F. Walter
+        name: Felix Walter
+    date: 2025-10
+    seriesinfo:
+      DOI: 10.48550/arXiv.2510.27325
+    target: https://arxiv.org/abs/2510.27325
 
 --- abstract
 
@@ -105,7 +118,7 @@ BIBE has broad utility; motivating use cases include:
 
 The encapsulated bundle is a BPv7 bundle. As in {{BTPU}}, however, it is treated throughout the tunnel as an opaque sequence of octets: no field of this protocol describes its content, and neither the encapsulation function nor the decapsulation element parses it. Its validity as a bundle is assessed only once it has been presented to the BPA of the decapsulating node ({{reception}}).
 
-Encapsulating bundles are themselves bundles and may in turn be encapsulated, enabling nested encapsulation to arbitrary depth as required by policy.
+Encapsulating bundles are themselves bundles and may in turn be encapsulated, enabling nested encapsulation to arbitrary depth as required by policy. One application is the recursive layering of DTN networks, each layer free to use its own routing approach ({{RECURSIVE-DTN}}).
 
 ## Similarity to IP Tunneling
 
@@ -409,7 +422,7 @@ Note that encoding constraints (definite-length encoding) are matters for the te
 
 This document is directly derived from draft-ietf-dtn-bibect, authored by Scott Burleigh, Alberto Montilla, Joshua Deaton, and Carlo Caini; its architecture and concepts originate with them. The central insight — that a BP network can itself serve as the "link layer" beneath a further layer of bundle protocol — is Scott Burleigh's, and the encapsulation-only scope of this document is a return to that of his original 2013 formulation, draft-irtf-burleigh-bibe.
 
-The segmentation mechanism was designed within the CCSDS Bundle-in-Bundle Encapsulation effort of the Space Internetworking Services (SIS-DTN) working group, which identified bundle segmentation, rather than BPv7 fragmentation, as the appropriate tool for carrying large bundles over size-limited paths, and defined the representation this document adopts. Joshua Deaton contributed to both the IETF and CCSDS strands of that work, which was demonstrated in a prototype implementation within DTNME at NASA. The segmentation model is aligned with the transfer/segment design of {{BTPU}}.
+The segmentation mechanism was designed within the CCSDS Bundle-in-Bundle Encapsulation effort of the Space Internetworking Services (SIS-DTN) working group, which identified bundle segmentation, rather than BPv7 fragmentation, as the appropriate tool for carrying large bundles over size-limited paths, and defined the representation this document adopts; the initial design was the work of Lars Baumgärtner and Giacomo Maldarella. Joshua Deaton contributed to both the IETF and CCSDS strands of the segmentation work. The mechanism was demonstrated in a prototype implementation within DTNME at NASA, and in a proof-of-concept implementation by Lukas Holst. The segmentation model is aligned with the transfer/segment design of {{BTPU}}.
 
 Brian Sipos contributed the CDDL formulation in {{cddl}}, the discipline of keeping normative text definitions strictly separate from CDDL, and the review that led to the PDU-derived Transfer ID scope of {{transfer-ids}}.
 
