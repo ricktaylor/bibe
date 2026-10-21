@@ -80,15 +80,24 @@ informative:
   RECURSIVE-DTN:
     title: Recursive Delay-Tolerant Networking using Bundle-in-Bundle Encapsulation
     author:
-      - ins: J. A. Fraire
-        name: Juan A. Fraire
       - ins: M. Feldmann
         name: Marius Feldmann
+      - ins: T. Nöthlich
+        name: Tobias Nöthlich
       - ins: F. Walter
         name: Felix Walter
+      - ins: M. Nitsch
+        name: Maximilian Nitsch
+      - ins: J. A. Fraire
+        name: Juan A. Fraire
+      - ins: G. A. Murzik
+        name: Georg A. Murzik
+      - ins: F. Fuchs
+        name: Fiona Fuchs
     date: 2025-10
     seriesinfo:
       DOI: 10.48550/arXiv.2510.27325
+      arXiv: 2510.27325
     target: https://arxiv.org/abs/2510.27325
 
 --- abstract
