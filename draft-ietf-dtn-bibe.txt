@@ -5,8 +5,8 @@
 Delay/Disruption Tolerant Networking                      R. Taylor, Ed.
 Internet-Draft                                      Aalyria Technologies
 Intended status: Standards Track                        A. Montilla, Ed.
-Expires: 11 March 2027                               Spatiam Corporation
-                                                        7 September 2026
+Expires: 24 April 2027                               Spatiam Corporation
+                                                         21 October 2026
 
 
                      Bundle-in-Bundle Encapsulation
@@ -17,11 +17,11 @@ Abstract
    This document describes Bundle-in-Bundle Encapsulation (BIBE), a
    Delay-Tolerant Networking (DTN) Bundle Protocol (BP) tunneling
    mechanism by which a bundle is carried as the payload of one or more
-   encapsulating bundles, allowing security measures, routing policy,
-   and protocol version translation to be applied to the encapsulating
-   bundle without modification of the encapsulated bundle.  The protocol
-   includes an optional segmentation mechanism, allowing a large
-   encapsulated bundle to be carried in multiple encapsulating bundles.
+   encapsulating bundles, allowing security measures and routing policy
+   to be applied to the encapsulating bundle without modification of the
+   encapsulated bundle.  The protocol includes an optional segmentation
+   mechanism, allowing a large encapsulated bundle to be carried in
+   multiple encapsulating bundles.
 
 About This Document
 
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 March 2027.
+   This Internet-Draft will expire on 24 April 2027.
 
 Copyright Notice
 
@@ -157,10 +157,6 @@ Table of Contents
       encapsulated bundle unmodified.  The encapsulating bundle egresses
       the domain at a designated decapsulating node.
 
-   *  Version encapsulation.  A Bundle Protocol version 6 [RFC5050]
-      bundle can be encapsulated for carriage across a BPv7 network, or
-      vice versa.
-
    *  Segmentation.  BPv7 bundle fragmentation (Section 5.8 of
       [RFC9171]) is incompatible with some BPSec deployments and is
       prohibited for bundles bearing certain security blocks.  The
@@ -182,22 +178,18 @@ Table of Contents
       necessarily reveals that class structure to on-path observers
       (Section 7).
 
-   As in [BTPU], the encapsulated bundle is treated throughout as an
-   opaque sequence of octets: no field of this protocol identifies its
-   format, and nothing in the procedures of this document depends upon
-   it.  Bundles of different Bundle Protocol versions can therefore be
-   carried, and multiplexed to the same decapsulation endpoint, without
-   an explicit discriminator: a receiver can distinguish the formats by
-   simple examination of the initial octets of the decapsulated data (a
-   BPv6 bundle begins with the octet 0x06, the BPv6 version number,
-   whereas a BPv7 bundle begins with the initial octet of a CBOR array).
-   Indeed, any binary data can be carried; the disposition of
-   decapsulated data that is not a bundle is beyond the scope of this
-   document and is a matter for the receiving implementation.
+   The encapsulated bundle is a BPv7 bundle.  As in [BTPU], however, it
+   is treated throughout the tunnel as an opaque sequence of octets: no
+   field of this protocol describes its content, and neither the
+   encapsulation function nor the decapsulation element parses it.  Its
+   validity as a bundle is assessed only once it has been presented to
+   the BPA of the decapsulating node (Section 4.4).
 
    Encapsulating bundles are themselves bundles and may in turn be
    encapsulated, enabling nested encapsulation to arbitrary depth as
-   required by policy.
+   required by policy.  One application is the recursive layering of DTN
+   networks, each layer free to use its own routing approach
+   ([RECURSIVE-DTN]).
 
 1.2.  Similarity to IP Tunneling
 
@@ -251,9 +243,9 @@ Table of Contents
 
 2.1.  Terminology
 
-   Encapsulated bundle:  A bundle, of any Bundle Protocol version,
-      forwarded by encapsulation and carried opaquely as (part of) the
-      payload of one or more encapsulating bundles.
+   Encapsulated bundle:  A BPv7 bundle forwarded by encapsulation and
+      carried opaquely as (part of) the payload of one or more
+      encapsulating bundles.
 
    Encapsulating bundle:  A BPv7 bundle whose payload encapsulates all
       or part of another bundle, formatted as described in Section 5.3.
@@ -359,12 +351,17 @@ Table of Contents
    endpoint in a scheme with defined multicast delivery semantics —
    delivery to every member — which would realize multicast BIBE:
    encapsulated forwarding to every member of the decapsulation endpoint
-   at once.  What is to be avoided is an endpoint with more than one
-   member for which the choice of delivering member is left unspecified,
-   as the Bundle Protocol leaves it for multi-member endpoints in the
-   dtn scheme; the consequences of that indeterminacy for BIBE —
-   unpredictable duplication of whole-bundle payloads, and segmented
-   transfers that can never be reassembled — are set out in Section 4.2.
+   at once.  An endpoint in a scheme with anycast semantics — delivery
+   to any one member — likewise defines delivery for each bundle, but
+   not that successive bundles reach the same member; the conditions
+   under which a segmented transfer may be directed to such an endpoint
+   are set out in Section 4.2.  What is to be avoided is an endpoint
+   with more than one member for which the choice of delivering member
+   is left unspecified, as the Bundle Protocol leaves it for multi-
+   member endpoints in the dtn scheme; the consequences of that
+   indeterminacy for BIBE — unpredictable duplication of whole-bundle
+   payloads, and segmented transfers that can never be reassembled — are
+   set out in Section 4.2.
 
    Note that BIBE encapsulation is a forwarding operation, not a
    delivery operation: policy (including BPSec) applicable to the
@@ -407,8 +404,7 @@ Table of Contents
       function SHALL generate a single whole-bundle payload
       encapsulating the entire bundle, and SHALL request transmission of
       an encapsulating bundle, destined for that endpoint, carrying that
-      payload.  A bundle that can be carried whole SHOULD NOT be
-      segmented.
+      payload.
 
    *  Otherwise the bundle SHALL be segmented as described in
       Section 4.2.  If the bundle cannot be segmented — the
@@ -479,24 +475,49 @@ Table of Contents
    of a segment of a transfer take delivery of every segment of that
    transfer: reassembly state is held by the element that takes delivery
    (Section 4.5), and an element holding only some of a transfer's
-   segments can never complete it.  A singleton endpoint satisfies this
-   requirement trivially.  An endpoint in a scheme whose delivery
-   procedures deliver every bundle to every member (Section 3) also
-   satisfies it: each member takes delivery of the complete set of
-   segments and reassembles independently.  What cannot satisfy it is a
-   multi-member endpoint for which the choice of delivering member is
-   unspecified: distinct encapsulating bundles of one transfer may then
-   be delivered to different members, each member accumulates a
-   disjoint, incomplete set of segments, and the transfer fails silently
-   at its expiry.  Accordingly, an encapsulating node MUST NOT segment a
-   bundle toward a decapsulation endpoint unless it is known — by the
-   rules of the EID's scheme (every 'ipn' scheme EID identifies a
-   singleton endpoint, Section 5.1 of [RFC9758]) or by configuration —
-   that every bundle destined for that endpoint is delivered either to a
-   single member or to every member.  Whole-bundle payloads are not
-   subject to this constraint: any member taking delivery holds the
+   segments can never complete it.  The requirement extends only to the
+   transfer's expiry (Section 5.1), after which no encapsulating bundle
+   of the transfer can be delivered.  A singleton endpoint satisfies it
+   trivially.  An endpoint in a scheme whose delivery procedures deliver
+   every bundle to every member (Section 3) also satisfies it: each
+   member takes delivery of the complete set of segments and reassembles
+   independently.  An endpoint whose members may take delivery of
+   distinct bundles — one with anycast semantics, or a multi-member
+   endpoint for which the choice of delivering member is unspecified —
+   does not satisfy it in general: distinct encapsulating bundles of one
+   transfer may be delivered to different members, each member
+   accumulates a disjoint, incomplete set of segments, and the transfer
+   fails silently at its expiry, having occupied reassembly state at
+   each of those members until then.
+
+   Accordingly, an encapsulating node MUST NOT segment a bundle toward a
+   decapsulation endpoint unless it is known that, until the transfer's
+   expiry, every encapsulating bundle of the transfer that is delivered
+   will be delivered to the same member, or to every member.  This is
+   known by the rules of the EID's scheme (every 'ipn' scheme EID
+   identifies a singleton endpoint, Section 5.1 of [RFC9758]), or by
+   configuration.  It is also known where the encapsulating node sets
+   the transfer's expiry, as Section 5.1 permits, no later than the end
+   of an interval during which only one member can take delivery: for
+   example, a single contact during which that member, as the
+   encapsulating node's next hop, is the only member that can take
+   delivery.  Such an interval ends no later than the earliest time at
+   which any other member could take delivery of an encapsulating bundle
+   of the transfer; where the coverage of several members overlaps, that
+   may be well before the end of the contact.  Whole-bundle payloads are
+   not subject to this constraint: any member taking delivery holds the
    entire encapsulated bundle, although delivery to more than one member
    duplicates the encapsulated bundle at each.
+
+   A transfer bounded in this way fails if the interval closes before
+   all of its encapsulating bundles have been transmitted: those not yet
+   transmitted expire at the encapsulating node.  An encapsulating node
+   that retains the encapsulated bundle until every encapsulating bundle
+   of the transfer has been transmitted (Section 4.1 permits, but does
+   not require, this) can detect that failure locally, and can
+   encapsulate the bundle afresh, as a new transfer, in a later
+   interval, subject as always to the encapsulated bundle's remaining
+   lifetime (Section 5.1).
 
 4.3.  Transfer IDs
 
@@ -534,9 +555,6 @@ Table of Contents
    persist sufficient assignment state or select Transfer IDs after
    restart in a manner unlikely to collide with transfers still in
    flight (e.g. derived from a timestamp).
-   // CBOR uints are variable-length with no fixed wrap point, and the
-   // encoding stays small (1–5 octets) for realistic values, so there
-   // is no pressure to keep the identifier space compact.
 
 4.4.  Reception
 
@@ -548,11 +566,10 @@ Table of Contents
       decapsulation element here acting in the capacity of a
       convergence-layer adapter (Section 3) — whereupon reception
       proceeds as defined in Section 5.6 of [RFC9171]: the encapsulated
-      bundle may be forwarded, delivered, etc.  Where the decapsulated
-      data is not a BPv7 bundle (see Section 1.1), its disposition is
-      determined by examination of its initial octets and is an
-      implementation matter — e.g. presentation of a BPv6 bundle to a
-      BPv6 agent.
+      bundle may be forwarded, delivered, etc.  Decapsulated octets that
+      do not constitute a well-formed BPv7 bundle (Section 4 of
+      [RFC9171]) are disposed of by that processing in the same way as a
+      malformed bundle received via any convergence layer.
 
    *  If the payload is a segment payload and the decapsulation element
       does not support reassembly, the element SHALL discard the
@@ -624,7 +641,9 @@ Table of Contents
    storage the node commits.  A transfer whose state is discarded under
    such policy has simply failed: the encapsulated bundle is never
    presented to the BPA.  A configured upper bound on the interval for
-   which an incomplete transfer is retained is one such policy, and is
+   which an incomplete transfer is retained, and a configured upper
+   bound on the total-length of a transfer for which any reassembly
+   state will be committed, are two such policies, and both are
    specifically recommended in Section 7.5.
 
 5.  The Encapsulating Bundle
@@ -650,14 +669,14 @@ Table of Contents
 
    An encapsulating bundle is an ordinary bundle, and its payload is not
    an administrative record; a decapsulation endpoint MUST NOT be the
-   administrative endpoint of the node.  The destination endpoint of an
+   administrative endpoint of the node.  Carrying the payload as
+   ordinary application data at a dedicated endpoint, rather than as an
+   administrative record, requires no administrative record type,
+   permits a node to establish multiple decapsulation endpoints (e.g.
+   per tunnel, Section 1.1), and keeps high-volume tunnel traffic away
+   from the administrative endpoint.  The destination endpoint of an
    encapsulating bundle is a decapsulation endpoint, which is distinct
    from the destination of the encapsulated bundle.
-   // Carrying the payload as ordinary application data at a dedicated
-   // endpoint, rather than as an administrative record, avoids any
-   // administrative record type allocation, permits multiple
-   // decapsulation endpoints per node (e.g. per-tunnel), and keeps the
-   // administrative endpoint free of high-volume traffic.
 
 5.1.  Primary Block
 
@@ -701,16 +720,13 @@ Table of Contents
       than the expiry time of the encapsulated bundle: the tunnel can
       never extend the transmission opportunity of the encapsulated
       bundle — an encapsulating bundle that outlived it would waste
-      network resources carrying data already expired at decapsulation —
-      and this bound underpins the transfer machinery of Section 4.3 and
-      Section 4.6.  The expiry time MAY be earlier than that of the
-      encapsulated bundle, deliberately curtailing the tunnel transit:
-      for example, where it is known that a bundle failing to complete
-      the tunnel sub-path within a certain duration cannot achieve
-      onward delivery within its own lifetime.  Where the encapsulated
-      data has no expiry known to the encapsulating node (e.g. arbitrary
-      binary data, Section 1.1), an expiry bound SHALL be established by
-      a-priori configuration and applied in the same way.
+      network resources carrying a bundle already expired at
+      decapsulation — and this bound underpins the transfer machinery of
+      Section 4.3 and Section 4.6.  The expiry time MAY be earlier than
+      that of the encapsulated bundle, deliberately curtailing the
+      tunnel transit: for example, where it is known that a bundle
+      failing to complete the tunnel sub-path within a certain duration
+      cannot achieve onward delivery within its own lifetime.
 
    For a segmented transfer, every encapsulating bundle of the transfer
    SHALL share a single expiry time — the transfer's expiry — regardless
@@ -725,17 +741,16 @@ Table of Contents
    time, setting each encapsulating bundle's lifetime to the transfer
    duration remaining at that bundle's creation and carrying a Bundle
    Age block as usual (Section 4.4.2 of [RFC9171]).
-   // The alternative — assigning all encapsulating bundles of a
-   // transfer an identical creation timestamp — is not viable in
-   // general: the sequence number component of the creation timestamp
-   // is generated by the source node's BPA as a property of the
-   // timestamp mechanism (Section 4.2.7 of [RFC9171]), not assignable
-   // per transfer, and duplicate (source node ID, creation timestamp)
-   // pairs risk the "unexpected network behavior" cautioned against
-   // there.  The rolling calculation composes with any timestamp
-   // generator, and has the useful side effect that later-created
-   // encapsulating bundles carry shorter lifetimes, so the network
-   // never retains one longer than the transfer it serves.
+
+   Assigning every encapsulating bundle of a transfer an identical
+   creation timestamp, and hence an identical lifetime, is not an
+   alternative.  The creation timestamp is a property of the BPA's
+   timestamp mechanism (Section 4.2.7 of [RFC9171]), not a per-transfer
+   parameter, and together with the source node ID it identifies a
+   bundle: bundle status reports identify their subject bundle by
+   exactly that pair (Section 6.1.1 of [RFC9171]), so encapsulating
+   bundles sharing a creation timestamp would render the per-segment
+   delivery reports of Section 6.1 indistinguishable.
 
    Selection of all other parameters governing the forwarding of
    encapsulating bundles (priority, security policy, etc.) is likewise a
@@ -798,11 +813,11 @@ Table of Contents
    the encapsulating node: the single hop that the tunnel presents,
    consistent with Section 6.1.  The decapsulating node takes this block
    as it finds it — it cannot verify it in general (the encapsulating
-   node may hold several node IDs, the encapsulated data may not be a
-   BPv7 bundle, and the block is optional) and correcting it would
-   modify the encapsulated bundle — but a stale or absent Previous Node
-   block is consulted only during local processing at the decapsulating
-   node and is replaced in the normal manner upon onward forwarding.
+   node may hold several node IDs, and the block is optional) and
+   correcting it would modify the encapsulated bundle — but a stale or
+   absent Previous Node block is consulted only during local processing
+   at the decapsulating node and is replaced in the normal manner upon
+   onward forwarding.
 
 5.3.  Payload
 
@@ -865,19 +880,13 @@ Table of Contents
        threshold set toward a peer that does not support reassembly,
        presents as persistent silent loss.  This document deliberately
        defines no signal reporting the disposition of a payload after
-       delivery; the visibility available from existing status report
-       machinery is set out in Section 6.1, and verifying that a tunnel
-       is correctly configured is an operational matter for its
-       administrators.
-       // A post-delivery disposition signal would make every
-       decapsulation
-       // element a bundle source, require an enumeration of failure
-       // reasons, and amount to the acknowledgement layer this protocol
-       // does not have; and the conditions it could report are
-       // configuration errors of a bilaterally configured tunnel,
-       properly
-       // detected by its operators rather than corrected by the
-       protocol.
+       delivery: such a signal would make every decapsulation element a
+       bundle source and would amount to the acknowledgement layer that
+       this protocol does not have (item 1 above), and the conditions it
+       could report are configuration errors of a bilaterally configured
+       tunnel, which are for its operators to detect rather than for the
+       protocol to correct.  The visibility available from existing
+       status report machinery is set out in Section 6.1.
 
    3.  Encapsulating and decapsulating nodes require compatible
        configuration (the decapsulation endpoint, the segmentation
@@ -895,13 +904,17 @@ Table of Contents
        BIBE encapsulation (at this node or a mutually recursive one),
        each encapsulation produces a new bundle that is encapsulated
        again, without limit.  Unlike IP, a bundle has no hop-limit field
-       that survives encapsulation, so the loop is not self-terminating
-       within bundle lifetime.  An implementation MUST protect against
-       this, for example by refusing to encapsulate a bundle it
-       recognizes as one of its own encapsulating bundles, by bounding
-       nesting depth (compare the tunnel encapsulation limit of
-       [TUNLIMIT]), or by configuration validation ensuring the route to
-       a decapsulation endpoint does not traverse the tunnel it serves.
+       that survives encapsulation: each encapsulating bundle starts a
+       new hop count (Section 5.2), so no hop limit, at any layer,
+       terminates the loop.  The lifetime rule of Section 5.1 bounds
+       every layer by the expiry of the original bundle, but places no
+       bound on the number of bundles generated before then.  An
+       implementation MUST protect against this, for example by refusing
+       to encapsulate a bundle it recognizes as one of its own
+       encapsulating bundles, by bounding nesting depth (compare the
+       tunnel encapsulation limit of [TUNLIMIT]), or by configuration
+       validation ensuring the route to a decapsulation endpoint does
+       not traverse the tunnel it serves.
 
 6.1.  Diagnostics
 
@@ -930,9 +943,15 @@ Table of Contents
       bundle was lost, using the existing reason codes (e.g. "Lifetime
       expired", "Depleted storage", "No known route to destination from
       here", "No timely contact with next node on route", "Block
-      unintelligible", "Hop limit exceeded" — the latter being the
-      signature of the encapsulation loops cautioned against in
-      Section 6).
+      unintelligible", "Hop limit exceeded").  On the tunnel path, "Hop
+      limit exceeded" signals a routing loop among the nodes forwarding
+      the encapsulating bundle, and is available only if the
+      encapsulating node included a Hop Count block.  It is not a
+      signature of the recursive encapsulation loops cautioned against
+      in Section 6: each encapsulation sources a new bundle whose hop
+      count starts at zero (Section 5.2), so no hop limit is ever
+      reached, and such loops are detectable only by the local
+      protections required there.
 
    *  Transfer completion: delivery reports requested on the
       encapsulating bundles of a transfer confirm, chunk by chunk, that
@@ -1054,6 +1073,22 @@ Table of Contents
    discard, as Section 4.6 permits, any transfer exceeding it: the
    sender-claimed expiry then bounds well-behaved transfers, while the
    configured bound caps the exposure to hostile or broken ones.
+
+   Total-length is likewise claimed by the sender: a single segment
+   payload claiming a very large total-length can induce a decapsulation
+   element that commits storage for the whole transfer upon receipt of
+   its first segment to commit far more storage than the adversary has
+   sent.  A decapsulating node SHOULD therefore also be configurable
+   with a maximum acceptable total-length, and SHOULD discard any
+   segment payload whose total-length exceeds it before committing any
+   reassembly state.  A natural choice is the largest bundle the node
+   would accept via any convergence layer: the reassembled bundle is in
+   any case subject to the node's normal inbound admission policy, and
+   nothing is gained by reassembling a bundle that will then be refused.
+   Independently of any such bound, an implementation SHOULD NOT commit
+   storage in proportion to a claimed total-length in advance of
+   receiving the corresponding octets.
+
    Because decapsulation endpoints are established by administrative
    policy rather than at a well-known service identifier (Section 3), an
    adversary has no predictable target for such traffic; operators
@@ -1099,9 +1134,9 @@ Table of Contents
 9.2.  Informative References
 
    [BTPU]     Taylor, R., "Bundle Transfer Protocol - Unidirectional",
-              Work in Progress, Internet-Draft, draft-ietf-dtn-btpu-04,
-              7 September 2026, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-dtn-btpu-04>.
+              Work in Progress, Internet-Draft, draft-ietf-dtn-btpu-05,
+              15 October 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-dtn-btpu-05>.
 
    [GRE]      Farinacci, D., Li, T., Hanks, S., Meyer, D., and P.
               Traina, "Generic Routing Encapsulation (GRE)", RFC 2784,
@@ -1116,9 +1151,11 @@ Table of Contents
               DOI 10.17487/RFC2003, October 1996,
               <https://www.rfc-editor.org/rfc/rfc2003>.
 
-   [RFC5050]  Scott, K. and S. Burleigh, "Bundle Protocol
-              Specification", RFC 5050, DOI 10.17487/RFC5050, November
-              2007, <https://www.rfc-editor.org/rfc/rfc5050>.
+   [RECURSIVE-DTN]
+              Fraire, J. A., Feldmann, M., and F. Walter, "Recursive
+              Delay-Tolerant Networking using Bundle-in-Bundle
+              Encapsulation", DOI 10.48550/arXiv.2510.27325, October
+              2025, <https://arxiv.org/abs/2510.27325>.
 
    [RFC8610]  Birkholz, H., Vigano, C., and C. Bormann, "Concise Data
               Definition Language (CDDL): A Notational Convention to
@@ -1174,10 +1211,11 @@ Appendix A.  CDDL Expression
    Note that encoding constraints (definite-length encoding) are matters
    for the text definitions of Section 5.3; CDDL does not express
    encoding options.  Note also that encapsulated-data is deliberately a
-   plain bstr rather than bstr .cbor bundle: its content may be a BPv6
-   bundle (which is not CBOR) in the version-encapsulation use case, and
-   in a segment payload it is an arbitrary slice of octets that need not
-   be well-formed CBOR at all.
+   plain bstr rather than bstr .cbor bundle: in a segment payload it is
+   an arbitrary slice of octets that need not be well-formed CBOR at
+   all, and in either form the content is opaque to the decapsulation
+   element and is validated as a bundle only by the BPA upon reception
+   (Section 4.4).
 
 Acknowledgments
 
@@ -1195,10 +1233,13 @@ Acknowledgments
    (SIS-DTN) working group, which identified bundle segmentation, rather
    than BPv7 fragmentation, as the appropriate tool for carrying large
    bundles over size-limited paths, and defined the representation this
-   document adopts.  Joshua Deaton contributed to both the IETF and
-   CCSDS strands of that work, which was demonstrated in a prototype
-   implementation within DTNME at NASA.  The segmentation model is
-   aligned with the transfer/segment design of [BTPU].
+   document adopts; the initial design was the work of Lars Baumgärtner
+   and Giacomo Maldarella.  Joshua Deaton contributed to both the IETF
+   and CCSDS strands of the segmentation work.  The mechanism was
+   demonstrated in a prototype implementation within DTNME at NASA, and
+   in a proof-of-concept implementation by Lukas Holst.  The
+   segmentation model is aligned with the transfer/segment design of
+   [BTPU].
 
    Brian Sipos contributed the CDDL formulation in Appendix A, the
    discipline of keeping normative text definitions strictly separate
