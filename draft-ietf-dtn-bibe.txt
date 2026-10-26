@@ -94,11 +94,12 @@ Table of Contents
      6.1.  Diagnostics
    7.  Security Considerations
      7.1.  Composition with BPSec
-     7.2.  Circumvention of Policy Enforcement
-     7.3.  Spoofing of the Encapsulated Bundle
-     7.4.  Injection Against Transfers
-     7.5.  Replay
-     7.6.  Resource Exhaustion
+     7.2.  Sender Anonymity
+     7.3.  Circumvention of Policy Enforcement
+     7.4.  Spoofing of the Encapsulated Bundle
+     7.5.  Injection Against Transfers
+     7.6.  Replay
+     7.7.  Resource Exhaustion
    8.  IANA Considerations
    9.  References
      9.1.  Normative References
@@ -249,6 +250,11 @@ Table of Contents
    capitals, as shown here.
 
 2.1.  Terminology
+
+   In this document, the source EID of a bundle is the EID carried in
+   the Source node ID field of its primary block, and its destination
+   EID is the EID carried in its Destination EID field (Section 4.3.1 of
+   [RFC9171]).
 
    Encapsulated bundle:  A BPv7 bundle forwarded by encapsulation and
       carried opaquely as (part of) the payload of one or more
@@ -539,17 +545,17 @@ Table of Contents
 4.3.  Transfer IDs
 
    Transfer IDs are unsigned integers that identify a transfer uniquely
-   within the scope of the pair (source node ID, destination EID) borne
-   by the primary blocks of the transfer's encapsulating bundles
+   within the scope of the pair (source EID, destination EID) borne by
+   the primary blocks of the transfer's encapsulating bundles
    (Section 5.1).  Both elements of the scope are explicit in every
    encapsulating bundle and are compared as EIDs at the decapsulating
    node (Section 4.5), so neither peer requires any context beyond the
-   bundle itself — in particular, no knowledge of which node IDs name
+   bundle itself — in particular, no knowledge of which EIDs identify
    the same node, of how many encapsulation functions operate at a node,
    or of how many endpoints a decapsulation element is registered in.  A
-   node holding several node IDs (Section 4.2.5.2 of [RFC9171])
-   consequently has an independent Transfer ID space for each (source
-   node ID, destination EID) pair it uses.  A Transfer ID carries no
+   node registered in several singleton endpoints (Section 4.2.5.2 of
+   [RFC9171]) consequently has an independent Transfer ID space for each
+   (source EID, destination EID) pair it uses.  A Transfer ID carries no
    ordering semantics: a decapsulation element MUST NOT infer
    transmission order, recency, or loss from the numeric values of
    Transfer IDs.  There is no analog of the transfer window of [BTPU]:
@@ -558,8 +564,8 @@ Table of Contents
    end of its lifetime.
 
    An encapsulating node MUST NOT assign a Transfer ID that identifies
-   another transfer with the same (source node ID, destination EID), any
-   of whose encapsulating bundles have yet to expire.  A Transfer ID
+   another transfer with the same (source EID, destination EID), any of
+   whose encapsulating bundles have yet to expire.  A Transfer ID
    therefore becomes reusable only once every encapsulating bundle of
    the transfer has expired (Section 5.5 of [RFC9171]): nominally at the
    transfer's expiry (Section 5.1), although where bundle age is
@@ -569,7 +575,7 @@ Table of Contents
    (Section 4.6) has no bearing on reuse.  Subject to this rule, the
    assignment strategy is an implementation matter, and uniqueness in
    any wider scope implies uniqueness in this one: a sequential counter
-   per (source node ID, destination EID) pair, a counter per destination
+   per (source EID, destination EID) pair, a counter per destination
    EID, and a single counter for the whole node are all valid
    disciplines, as is random assignment.  To satisfy the rule across
    restarts of the encapsulating node, an implementation SHOULD either
@@ -604,17 +610,17 @@ Table of Contents
 4.5.  Reassembly
 
    A decapsulation element maintains a reassembly structure per active
-   transfer, keyed by the triple (source node ID, destination EID,
-   transfer-id) of the encapsulating bundle.  Every component of the key
-   is taken from the encapsulating bundle itself, so the key is
-   unambiguous even when one decapsulation element is registered in
-   several endpoints.  Source node IDs and destination EIDs are compared
-   as EIDs, under the EID matching rules of their URI schemes (e.g.,
-   Section 6.4 of [RFC9758]), not as encoded octets: a decapsulation
-   element is not required to determine whether two distinct EIDs name
-   the same node or endpoint, and the consistency rules of Section 5.1
-   ensure that such comparison suffices.  The nature of the reassembly
-   structure is an implementation matter.
+   transfer, keyed by the triple (source EID, destination EID, transfer-
+   id) of the encapsulating bundle.  Every component of the key is taken
+   from the encapsulating bundle itself, so the key is unambiguous even
+   when one decapsulation element is registered in several endpoints.
+   Source EIDs and destination EIDs are compared as EIDs, under the EID
+   matching rules of their URI schemes (e.g., Section 6.4 of [RFC9758]),
+   not as encoded octets: a decapsulation element is not required to
+   determine whether two distinct EIDs name the same node or endpoint,
+   and the consistency rules of Section 5.1 ensure that such comparison
+   suffices.  The nature of the reassembly structure is an
+   implementation matter.
 
    Upon processing a segment payload:
 
@@ -672,7 +678,7 @@ Table of Contents
    bound on the total-length of a transfer for which any reassembly
    state will be committed, are two such policies; both, together with a
    bound on the reassembly state committed across all transfers, are
-   specifically recommended in Section 7.6.
+   specifically recommended in Section 7.7.
 
 5.  The Encapsulating Bundle
 
@@ -718,20 +724,17 @@ Table of Contents
       bear the same destination EID: the destination is one element of
       the scope that identifies the transfer (Section 4.3).
 
-   Source node ID:  SHOULD be a node ID of the encapsulating node — the
-      EID of any singleton endpoint in which that node is registered
-      (Section 4.2.5.2 of [RFC9171]): anonymous (dtn:none) sourcing
-      defeats the peer authentication measures described in Section 7.
-      Note that a node may legitimately hold many node IDs; which of
-      them is used is a matter of policy.  When the payload is a segment
-      payload, however, the source node ID MUST NOT identify the null
-      endpoint (dtn:none, ipn:0.0, or ipn:0.0.0; Section 5.2 of
-      [RFC9758]), and every encapsulating bundle of the transfer SHALL
-      bear the same source node ID: a decapsulation element identifies a
-      transfer by comparison of source node IDs as EIDs (Section 4.5),
-      without resolving which node an EID names, so a node holding
-      several node IDs must use one of them consistently throughout a
-      transfer.
+   Source node ID:  Set as for any newly created bundle (Section 4.2.5.2
+      of [RFC9171]), except that the source EID MUST NOT identify the
+      null endpoint (dtn:none, ipn:0.0, or ipn:0.0.0; Section 5.2 of
+      [RFC9758]): anonymous sourcing defeats the peer authorization
+      measures described in Section 7, and disables the status reporting
+      described in Section 6.1 (Section 4.2.3 of [RFC9171]); Section 7.2
+      describes an alternative for deployments requiring sender
+      anonymity.  When the payload is a segment payload, every
+      encapsulating bundle of the transfer SHALL bear the same source
+      EID, which is one element of the scope that identifies the
+      transfer (Section 4.3).
 
    Report-to EID:  Set according to the policy of the encapsulating
       node.
@@ -783,11 +786,11 @@ Table of Contents
    creation timestamp, and hence an identical lifetime, is not an
    alternative.  The creation timestamp is a property of the BPA's
    timestamp mechanism (Section 4.2.7 of [RFC9171]), not a per-transfer
-   parameter, and together with the source node ID it identifies a
-   bundle: bundle status reports identify their subject bundle by
-   exactly that pair (Section 6.1.1 of [RFC9171]), so encapsulating
-   bundles sharing a creation timestamp would render the per-segment
-   delivery reports of Section 6.1 indistinguishable.
+   parameter, and together with the source EID it identifies a bundle:
+   bundle status reports identify their subject bundle by exactly that
+   pair (Section 6.1.1 of [RFC9171]), so encapsulating bundles sharing a
+   creation timestamp would render the per-segment delivery reports of
+   Section 6.1 indistinguishable.
 
    Selection of all other parameters governing the forwarding of
    encapsulating bundles (priority, security policy, etc.) is likewise a
@@ -851,11 +854,11 @@ Table of Contents
    the encapsulating node: the single hop that the tunnel presents,
    consistent with Section 6.1.  The decapsulating node takes this block
    as it finds it — it cannot verify it in general (the encapsulating
-   node may hold several node IDs, and the block is optional) and
-   correcting it would modify the encapsulated bundle — but a stale or
-   absent Previous Node block is consulted only during local processing
-   at the decapsulating node and is replaced in the normal manner upon
-   onward forwarding.
+   node may be registered in several singleton endpoints, and the block
+   is optional) and correcting it would modify the encapsulated bundle —
+   but a stale or absent Previous Node block is consulted only during
+   local processing at the decapsulating node and is replaced in the
+   normal manner upon onward forwarding.
 
 5.3.  Payload
 
@@ -898,7 +901,7 @@ Table of Contents
    of other than the type defined above, or that is a segment payload
    with a total-length of zero or an empty encapsulated-data.  A payload
    so discarded, like a segment payload discarded under Section 4.5 or
-   Section 7.6, creates no reassembly state.
+   Section 7.7, creates no reassembly state.
 
    An informative CDDL expression of this structure is provided in
    Appendix A.
@@ -1052,7 +1055,25 @@ Table of Contents
    including its primary block, concealing the encapsulated source and
    destination from observers on the encapsulating path.
 
-7.2.  Circumvention of Policy Enforcement
+7.2.  Sender Anonymity
+
+   Encapsulation conceals the source of the encapsulated bundle, but the
+   source EID of each encapsulating bundle is visible on the
+   encapsulating path and to the decapsulating node.  The null endpoint
+   is not available to conceal it (Section 5.1).  A deployment requiring
+   sender anonymity can instead source encapsulating bundles from
+   ephemeral singleton endpoints, established for the purpose and not
+   otherwise associated with the encapsulating node: a distinct
+   ephemeral source EID per tunnel or transfer prevents a decapsulating
+   node from linking them to one another or to the node, while
+   preserving the bundle identity and transfer scope (Section 4.3) that
+   the null endpoint would destroy.  How such EIDs are allocated is
+   outside the scope of this document; note, however, that the EID
+   scheme and allocation chosen may themselves reveal information, and
+   that some allocations are valid only within a single administrative
+   domain (e.g. Section 5.5 of [RFC9758]).
+
+7.3.  Circumvention of Policy Enforcement
 
    As [TUNSEC] observes for IP, tunneled traffic is opaque to inspection
    and filtering points along the tunnel path: a node on the
@@ -1075,7 +1096,7 @@ Table of Contents
    will accept encapsulating bundles, just as prudent IP networks
    control where tunnels may terminate.
 
-7.3.  Spoofing of the Encapsulated Bundle
+7.4.  Spoofing of the Encapsulated Bundle
 
    Nothing in this protocol authenticates the contents of an
    encapsulated bundle: the source of the encapsulated bundle is
@@ -1089,10 +1110,10 @@ Table of Contents
    encapsulated bundle requires BPSec applied to the encapsulated bundle
    itself.
 
-7.4.  Injection Against Transfers
+7.5.  Injection Against Transfers
 
    An adversary able to cause a fabricated bundle to be delivered at a
-   decapsulation endpoint, bearing the (source node ID, destination EID)
+   decapsulation endpoint, bearing the (source EID, destination EID)
    pair and Transfer ID of a transfer in progress, can attack that
    transfer.  An inconsistent forged segment — one with a mismatched
    total-length, or content overlapping previously received ranges —
@@ -1108,24 +1129,24 @@ Table of Contents
    reassembly state rather than expending further resources on a
    transfer that can no longer complete correctly.
 
-   The mitigation is the same as for resource exhaustion (Section 7.6):
+   The mitigation is the same as for resource exhaustion (Section 7.7):
    authenticate encapsulating bundles, so that forged payloads are
    discarded before they reach the reassembly procedures.  A deployment
    relying on authentication for this purpose SHOULD configure the
    security policy of the decapsulating node to require a BIB whose
    security target is the payload, to accept that BIB only from a
-   security source authorized as a tunnel peer for the source node ID
-   and destination EID of the encapsulating bundle, and to require a
+   security source authorized as a tunnel peer for the source EID and
+   destination EID of the encapsulating bundle, and to require a
    security context that binds the payload to the primary block, so that
-   the (source node ID, destination EID) scope of the transfer
-   (Section 4.3) cannot be altered undetected.  Whether a BIB binds its
-   security target to the primary block, or to any other block, depends
-   on the security context and its parameters; BPSec itself does not
-   imply it.  Integrity protection applied to the encapsulated bundle
-   itself, surviving the tunnel intact (Section 5), additionally detects
-   any corrupt reassembly after decapsulation.
+   the (source EID, destination EID) scope of the transfer (Section 4.3)
+   cannot be altered undetected.  Whether a BIB binds its security
+   target to the primary block, or to any other block, depends on the
+   security context and its parameters; BPSec itself does not imply it.
+   Integrity protection applied to the encapsulated bundle itself,
+   surviving the tunnel intact (Section 5), additionally detects any
+   corrupt reassembly after decapsulation.
 
-7.5.  Replay
+7.6.  Replay
 
    Authentication of an encapsulating bundle establishes neither its
    freshness nor its uniqueness: a captured encapsulating bundle bearing
@@ -1133,7 +1154,7 @@ Table of Contents
    A replayed segment payload whose transfer is still in progress is a
    duplicate, handled by Section 4.5; one arriving after its transfer
    has completed or been discarded begins a new transfer, with the
-   consequences set out in Section 7.6; and a replay of a whole-bundle
+   consequences set out in Section 7.7; and a replay of a whole-bundle
    payload, or of every segment payload of a transfer, presents the
    encapsulated bundle to the BPA again, as would the replay of any
    bundle.
@@ -1154,10 +1175,10 @@ Table of Contents
    context that binds the payload to the primary block; any anti-replay
    mechanism provided by the chosen security context (Section 8.2.4 of
    [RFC9172]) offers further protection.  The local bounds of
-   Section 7.6 limit the resources that replay can consume, but do not
+   Section 7.7 limit the resources that replay can consume, but do not
    establish freshness.
 
-7.6.  Resource Exhaustion
+7.7.  Resource Exhaustion
 
    A decapsulating node is exposed to resource-exhaustion attack by an
    adversary transmitting incomplete transfers, or segment payloads with
@@ -1198,7 +1219,7 @@ Table of Contents
 
    Reassembly state is also created by a segment payload that arrives
    after its transfer has completed or been discarded, whether a late
-   duplicate or a replay (Section 7.5): having no transfer in progress
+   duplicate or a replay (Section 7.6): having no transfer in progress
    to join, it begins a new transfer, which will ordinarily never
    complete, and whose state persists until discarded under Section 4.6;
    repeated replay can renew such state indefinitely.  This affects only
@@ -1214,7 +1235,7 @@ Table of Contents
    observers (Section 1.1).  The expiry deadline and local resource
    management policies of Section 4.6 mitigate this; deployments SHOULD
    additionally authenticate encapsulating bundles, under security
-   policy such as that described in Section 7.4, so that payloads from
+   policy such as that described in Section 7.5, so that payloads from
    unauthorized sources can be discarded before reassembly state is
    committed.  Authentication narrows the exposure to authorized peers
    but does not eliminate it: a compromised or misbehaving authorized
