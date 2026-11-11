@@ -5,8 +5,8 @@
 Delay/Disruption Tolerant Networking                      R. Taylor, Ed.
 Internet-Draft                                      Aalyria Technologies
 Intended status: Standards Track                        A. Montilla, Ed.
-Expires: 29 April 2027                               Spatiam Corporation
-                                                         26 October 2026
+Expires: 15 May 2027                                 Spatiam Corporation
+                                                        11 November 2026
 
 
                      Bundle-in-Bundle Encapsulation
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 April 2027.
+   This Internet-Draft will expire on 15 May 2027.
 
 Copyright Notice
 
@@ -525,12 +525,14 @@ Table of Contents
    example, a single contact during which that member, as the
    encapsulating node's next hop, is the only member that can take
    delivery.  Such an interval ends no later than the earliest time at
-   which any other member could take delivery of an encapsulating bundle
-   of the transfer; where the coverage of several members overlaps, that
-   may be well before the end of the contact.  Whole-bundle payloads are
-   not subject to this constraint: any member taking delivery holds the
-   entire encapsulated bundle, although delivery to more than one member
-   duplicates the encapsulated bundle at each.
+   which an encapsulating bundle of the transfer might be delivered to
+   another member.  Overlapping coverage does not by itself end the
+   interval: it continues for as long as delivery remains confined to
+   that member, for example because the encapsulating node's
+   convergence-layer adapter addresses only that member.  Whole-bundle
+   payloads are not subject to this constraint: any member taking
+   delivery holds the entire encapsulated bundle, although delivery to
+   more than one member duplicates the encapsulated bundle at each.
 
    A transfer bounded in this way fails if the interval closes before
    all of its encapsulating bundles have been transmitted: those not yet
@@ -943,13 +945,23 @@ Table of Contents
        threshold, and whether reassembly is supported), established in
        advance.
 
-   4.  An encapsulating bundle whose destination endpoint has no
+   4.  The encapsulated bundle is opaque for the whole of the tunnel:
+       none of its extension blocks are processed, and none of its
+       status report requests are acted on, until it is decapsulated
+       (Section 5.2).  Where a tunnel exists only to carry bundles
+       across a particular sub-path, such as a link whose convergence
+       layer cannot carry the bundles whole, the decapsulation endpoint
+       is therefore best placed at the end of that sub-path, so that the
+       encapsulated bundle is again processed hop by hop as soon as
+       possible.
+
+   5.  An encapsulating bundle whose destination endpoint has no
        registered decapsulation element at the destination node will be
        delivered to whatever application is registered there, or
        abandoned; nothing distinguishes an encapsulating bundle from any
        other bundle in transit.
 
-   5.  As with IP tunnels, recursive encapsulation loops are possible:
+   6.  As with IP tunnels, recursive encapsulation loops are possible:
        if the route toward a decapsulation endpoint itself resolves to
        BIBE encapsulation (at this node or a mutually recursive one),
        each encapsulation produces a new bundle that is encapsulated
@@ -1398,7 +1410,7 @@ Acknowledgments
 Contributors
 
    Scott Burleigh
-   IPNGROUP
+   IPNSIG Inc.
    Email: sburleig.sb@gmail.com
 
 
