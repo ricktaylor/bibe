@@ -36,16 +36,16 @@ author:
 
 # -05 authors, Alberto Montilla is a co-editor of this document; the others
 
-# are listed as Contributors below, and individuals to confirm they are
+# are listed as Contributors below. Scott Burleigh and Carlo Caini have
 
-# content with Contributor (rather than co-author) listing, with
+# confirmed their Contributor listing and details; Joshua Deaton has yet to
 
-# affiliations/addresses to be re-verified
+# confirm, and his affiliation and address are to be re-verified
 
 contributor:
 
 - fullname: Scott Burleigh
-  organization: IPNGROUP
+  organization: IPNSIG Inc.
   email: sburleig.sb@gmail.com
   contribution: Author of the successive BIBE Internet-Drafts, from draft-irtf-burleigh-bibe (2013) through draft-ietf-dtn-bibect, from which this document is directly derived; the BIBE architecture is his.
 
