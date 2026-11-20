@@ -5,8 +5,8 @@
 Delay/Disruption Tolerant Networking                      R. Taylor, Ed.
 Internet-Draft                                      Aalyria Technologies
 Intended status: Standards Track                        A. Montilla, Ed.
-Expires: 15 May 2027                                 Spatiam Corporation
-                                                        11 November 2026
+Expires: 24 May 2027                                 Spatiam Corporation
+                                                        20 November 2026
 
 
                      Bundle-in-Bundle Encapsulation
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 May 2027.
+   This Internet-Draft will expire on 24 May 2027.
 
 Copyright Notice
 
@@ -405,14 +405,15 @@ Table of Contents
    protocol; it is not a function of the encapsulation function.
    Because this document does not require that the encapsulation
    function be realized as a convergence-layer adapter (Section 3),
-   however, the capture point must be pinned explicitly: the octets
-   captured for encapsulation MUST be those of the bundle after that
-   forwarding-time processing, captured once, before any segmentation.
-   Capture is thus the "last possible moment" before conveyance at which
-   that processing advances the bundle age, and a Previous Node block,
-   if present in the captured octets, identifies the encapsulating node.
-   The consequences for the blocks of the encapsulated bundle are set
-   out in Section 5.
+   however, the point at which the bundle is encapsulated must be stated
+   explicitly: the encapsulation function MUST encapsulate the bundle as
+   it stands after that forwarding-time processing, once, and before any
+   segmentation.  Encapsulation thus takes the place of the CLA's
+   initiation of conveyance: the bundle age is advanced at the last
+   possible moment before it, as Section 5.4 of [RFC9171] requires, and
+   a Previous Node block, if present in the encapsulated bundle,
+   identifies the encapsulating node.  The consequences for the blocks
+   of the encapsulated bundle are set out in Section 5.
 
    The encapsulation function then generates the payload or payloads:
 
@@ -695,8 +696,8 @@ Table of Contents
    The converse also holds: the tunnel contributes nothing to the
    encapsulated bundle.  The encapsulated bundle is immutable while
    encapsulated — the octets presented to the BPA of the decapsulating
-   node (Section 4.4, Section 4.5) SHALL be exactly the octets captured
-   by the encapsulation function (Section 4.1); neither the
+   node (Section 4.4, Section 4.5) SHALL be exactly the octets
+   encapsulated by the encapsulation function (Section 4.1); neither the
    encapsulation function nor the decapsulation element modifies them in
    any way, and any divergence is corruption (Section 4.5) or an attack
    (Section 7), not processing.  This invariance is what allows
